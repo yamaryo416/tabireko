@@ -1,42 +1,42 @@
-"use client";
+"use client"
 
-import { Button, Input } from "@nextui-org/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Button, Input } from "@nextui-org/react"
+import Image from "next/image"
+import { useEffect, useState } from "react"
 
-import { login, signup } from "./action";
+import { login, signup } from "./action"
 
 const LoginPage = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const handleLogin = async (formData: FormData) => {
-    setLoading(true);
-    login(formData);
+    setLoading(true)
+    login(formData)
     try {
-      await login(formData);
+      await login(formData)
     } catch {
-      setError("ログインに失敗しました");
+      setError("ログインに失敗しました")
     }
-  };
+  }
 
   const handleSignup = async (formData: FormData) => {
-    setLoading(true);
-    login(formData);
+    setLoading(true)
+    login(formData)
     try {
-      await signup(formData);
+      await signup(formData)
     } catch {
-      setError("登録に失敗しました");
-      setLoading(false);
+      setError("登録に失敗しました")
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    if (error === "") return;
+    if (error === "") return
     setTimeout(() => {
-      setError("");
-    }, 5000);
-  }, [error]);
+      setError("")
+    }, 5000)
+  }, [error])
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -91,7 +91,7 @@ const LoginPage = () => {
         </Button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage

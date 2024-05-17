@@ -1,14 +1,14 @@
-import { Metadata } from "next";
+import { Metadata } from "next"
 
-import { NextUIProvider } from "@nextui-org/react";
+import { NextUIProvider } from "@nextui-org/react"
 
-import { Header } from "@/components/Header";
-import { Map } from "@/components/Map";
-import { MapProvider } from "@/provider/MapProvider";
+import { Header } from "@/components/Header"
+import { Map } from "@/components/Map"
+import { MapProvider } from "@/provider/MapProvider"
 
 export const metadata: Metadata = {
   title: "旅ろぐ",
-};
+}
 
 export default function Home() {
   return (
@@ -20,5 +20,5 @@ export default function Home() {
         </NextUIProvider>
       </MapProvider>
     </main>
-  );
+  )
 }

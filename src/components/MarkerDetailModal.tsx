@@ -1,28 +1,28 @@
-import { Flash } from "@/types/flash";
-import { Marker } from "@/types/marker";
-import { MarkerImage } from "@/types/marker_image";
-import { deleteMarker } from "@/utils/api/marker";
+import { Flash } from "@/types/flash"
+import { Marker } from "@/types/marker"
+import { MarkerImage } from "@/types/marker_image"
+import { deleteMarker } from "@/utils/api/marker"
 import {
   Modal,
   ModalContent,
   ModalBody,
   useDisclosure,
   Button,
-} from "@nextui-org/react";
-import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
-import { MarkerDeleteModal } from "./MarkerDeleteModal";
+} from "@nextui-org/react"
+import Image from "next/image"
+import { Dispatch, SetStateAction } from "react"
+import { MarkerDeleteModal } from "./MarkerDeleteModal"
 
 type PropsType = {
-  selectedMarker: Marker | null;
-  selectedMarkerImgs: MarkerImage[];
-  isOpenDetailModal: boolean;
-  setSelectedMarker: Dispatch<SetStateAction<Marker | null>>;
-  setMarkerList: Dispatch<SetStateAction<Marker[]>>;
-  setFlash: Dispatch<SetStateAction<Flash | null>>;
-  onCloseDetailModal: () => void;
-  onOpenEditMarker: () => void;
-};
+  selectedMarker: Marker | null
+  selectedMarkerImgs: MarkerImage[]
+  isOpenDetailModal: boolean
+  setSelectedMarker: Dispatch<SetStateAction<Marker | null>>
+  setMarkerList: Dispatch<SetStateAction<Marker[]>>
+  setFlash: Dispatch<SetStateAction<Flash | null>>
+  onCloseDetailModal: () => void
+  onOpenEditMarker: () => void
+}
 
 export const MarkerDetailModal = ({
   selectedMarker,
@@ -39,24 +39,24 @@ export const MarkerDetailModal = ({
     isOpen: isOpenDeleteMarkerModal,
     onOpen: onOpenDeleteMarkerModal,
     onClose: onCloseDeleteMarkerModal,
-  } = useDisclosure();
+  } = useDisclosure()
 
   const handleDelete = async () => {
-    if (!selectedMarker) return;
-    const id = selectedMarker.id;
-    const { error } = await deleteMarker(id);
+    if (!selectedMarker) return
+    const id = selectedMarker.id
+    const { error } = await deleteMarker(id)
     if (!!error) {
-      setFlash({ kind: "failed", message: "記録の削除に失敗しました" });
-      return;
+      setFlash({ kind: "failed", message: "記録の削除に失敗しました" })
+      return
     }
-    setFlash({ kind: "success", message: "記録を削除しました。" });
-    setSelectedMarker(null);
+    setFlash({ kind: "success", message: "記録を削除しました。" })
+    setSelectedMarker(null)
     setMarkerList((prevMarkerList) => [
       ...prevMarkerList.filter((marker) => marker.id !== id),
-    ]);
-    onCloseDeleteMarkerModal();
-    onCloseDetailModal();
-  };
+    ])
+    onCloseDeleteMarkerModal()
+    onCloseDetailModal()
+  }
 
   return (
     <Modal
@@ -103,5 +103,5 @@ export const MarkerDetailModal = ({
         </ModalBody>
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}

@@ -1,30 +1,28 @@
-"use client";
+"use client"
 
-import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
-import { useMap } from "@/hooks/use-map";
-import { SearchLocation } from "./SearchLocation";
-import { FilterTag } from "./FilterTag";
-import { MarkerCreateModal } from "./MarkerCreateModal";
-import { TagCreateModal } from "./TagCreateModal";
-import { MarkerDetailModal } from "./MarkerDetailModal";
-import { FlashMessage } from "./FlashMessage";
-import { useState } from "react";
-import { MarkerEditModal } from "./MarkerEditModal";
+import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api"
+import { useMap } from "@/hooks/use-map"
+import { SearchLocation } from "./SearchLocation"
+import { FilterTag } from "./FilterTag"
+import { MarkerCreateModal } from "./MarkerCreateModal"
+import { TagCreateModal } from "./TagCreateModal"
+import { MarkerDetailModal } from "./MarkerDetailModal"
+import { FlashMessage } from "./FlashMessage"
+import { useState } from "react"
+import { MarkerEditModal } from "./MarkerEditModal"
 
 export const defaultMapContainerStyle = {
   width: "100%",
   height: "70vh",
   borderRadius: "15px 0px 0px 15px",
-};
+}
 
 const defaultMapOptions: google.maps.MapOptions = {
   zoomControl: true,
   tilt: 0,
-  gestureHandling: "auto",
-  mapTypeId: "roadmap",
-  // @ts-ignore
   gestureHandling: "greedy",
-};
+  mapTypeId: "roadmap",
+}
 
 export const Map = () => {
   const {
@@ -76,9 +74,9 @@ export const Map = () => {
     handleEditMarker,
     removeImage,
     onCloseEditMarkerModal,
-  } = useMap();
+  } = useMap()
 
-  const [isDisplayBaloon, setIsDisplayBaloon] = useState(true);
+  const [isDisplayBaloon, setIsDisplayBaloon] = useState(true)
 
   return (
     <div className="fixed left-0 top-[57px] w-full">
@@ -172,5 +170,5 @@ export const Map = () => {
         handleEdit={handleEditMarker}
       />
     </div>
-  );
-};
+  )
+}

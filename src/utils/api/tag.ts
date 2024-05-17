@@ -1,9 +1,9 @@
-import { supabase } from "../supabase/client";
+import { supabase } from "../supabase/client"
 
 export const getTagList = async () => {
-  const userData = await supabase.auth.getUser();
+  const userData = await supabase.auth.getUser()
   if (userData?.data?.user == null) {
-    return { error: null, data: null };
+    return { error: null, data: null }
   }
   return await supabase
     .from("tag")
@@ -21,13 +21,13 @@ export const getTagList = async () => {
         )
       `,
     )
-    .eq("user_id", userData.data.user.id);
-};
+    .eq("user_id", userData.data.user.id)
+}
 
 export const createTag = async (data: any) => {
-  const userData = await supabase.auth.getUser();
+  const userData = await supabase.auth.getUser()
   if (userData?.data?.user == null) {
-    return { error: null, data: null };
+    return { error: null, data: null }
   }
   return await supabase.from("tag").insert([data]).select(`
         id,
@@ -40,5 +40,5 @@ export const createTag = async (data: any) => {
           name,
           url
         )
-      `);
-};
+      `)
+}

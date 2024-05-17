@@ -1,11 +1,11 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react"
 
 type PropsType = {
-  searchWord: string;
-  searchSuggestList: google.maps.GeocoderResult[];
-  onSearchLocation: (e: ChangeEvent<HTMLInputElement>) => void;
-  onClickSearchLocation: (result: google.maps.GeocoderResult) => void;
-};
+  searchWord: string
+  searchSuggestList: google.maps.GeocoderResult[]
+  onSearchLocation: (e: ChangeEvent<HTMLInputElement>) => void
+  onClickSearchLocation: (result: google.maps.GeocoderResult) => void
+}
 
 export const SearchLocation = ({
   searchWord,
@@ -34,5 +34,5 @@ export const SearchLocation = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

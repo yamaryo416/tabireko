@@ -1,4 +1,4 @@
-import { Tag } from "@/types/tag";
+import { Tag } from "@/types/tag"
 import {
   Button,
   Checkbox,
@@ -7,21 +7,21 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-} from "@nextui-org/react";
-import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
+} from "@nextui-org/react"
+import Image from "next/image"
+import { Dispatch, SetStateAction } from "react"
 
 type PropsType = {
-  isDisplayBaloon: boolean;
-  tagList: Tag[];
-  isOpenFilterTagModal: boolean;
-  filterTagIds: number[];
-  setIsDisplayBaloon: Dispatch<SetStateAction<boolean>>;
-  setFilterTagIds: Dispatch<SetStateAction<number[]>>;
-  onOpenFilterTagModal: () => void;
-  toggleFilterTagIds: (id: number) => void;
-  onCloseFilterTagModal: () => void;
-};
+  isDisplayBaloon: boolean
+  tagList: Tag[]
+  isOpenFilterTagModal: boolean
+  filterTagIds: number[]
+  setIsDisplayBaloon: Dispatch<SetStateAction<boolean>>
+  setFilterTagIds: Dispatch<SetStateAction<number[]>>
+  onOpenFilterTagModal: () => void
+  toggleFilterTagIds: (id: number) => void
+  onCloseFilterTagModal: () => void
+}
 
 export const FilterTag = ({
   isDisplayBaloon,
@@ -34,7 +34,7 @@ export const FilterTag = ({
   toggleFilterTagIds,
   onCloseFilterTagModal,
 }: PropsType) => {
-  if (tagList.length === 0) return <></>;
+  if (tagList.length === 0) return <></>
   return (
     <>
       <div className="flex justify-between">
@@ -95,5 +95,5 @@ export const FilterTag = ({
         </ModalContent>
       </Modal>
     </>
-  );
-};
+  )
+}

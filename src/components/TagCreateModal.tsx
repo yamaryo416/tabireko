@@ -1,4 +1,4 @@
-import { Icon } from "@/types/icon";
+import { Icon } from "@/types/icon"
 import {
   Modal,
   ModalContent,
@@ -8,17 +8,17 @@ import {
   Input,
   Select,
   SelectItem,
-} from "@nextui-org/react";
-import { ChangeEvent } from "react";
+} from "@nextui-org/react"
+import { ChangeEvent } from "react"
 
 type PropsType = {
-  newTag: { name: string; icon_id: number };
-  isOpenCreateTagModal: boolean;
-  iconList: Icon[];
-  onCloseCreateTagModal: () => void;
-  handleCreateTag: () => void;
-  changeNewTag: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-};
+  newTag: { name: string; icon_id: number }
+  isOpenCreateTagModal: boolean
+  iconList: Icon[]
+  onCloseCreateTagModal: () => void
+  handleCreateTag: () => void
+  changeNewTag: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+}
 
 export const TagCreateModal = ({
   newTag,
@@ -76,5 +76,5 @@ export const TagCreateModal = ({
         </ModalBody>
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}

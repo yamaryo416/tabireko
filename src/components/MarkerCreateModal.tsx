@@ -1,6 +1,6 @@
-import { NewMarker } from "@/types/marker";
-import { Tag } from "@/types/tag";
-import { ZonedDateTime } from "@internationalized/date";
+import { NewMarker } from "@/types/marker"
+import { Tag } from "@/types/tag"
+import { ZonedDateTime } from "@internationalized/date"
 import {
   Modal,
   ModalContent,
@@ -15,27 +15,24 @@ import {
   SelectItem,
   Checkbox,
   Spinner,
-} from "@nextui-org/react";
-import Image from "next/image";
-import { ChangeEvent } from "react";
+} from "@nextui-org/react"
+import Image from "next/image"
+import { ChangeEvent } from "react"
 
 type PropsType = {
-  loading: boolean;
-  isOpenCreateMarkerModal: boolean;
-  newMarker: NewMarker;
-  tagList: Tag[];
-  onOpenCreateTagModal: () => void;
-  onCloseCreateMarkerModal: () => void;
+  loading: boolean
+  isOpenCreateMarkerModal: boolean
+  newMarker: NewMarker
+  tagList: Tag[]
+  onOpenCreateTagModal: () => void
+  onCloseCreateMarkerModal: () => void
   changeNewMarker: (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) => void;
-  changeDatetime: (value: ZonedDateTime) => void;
-  handleUploadImg: (
-    e: ChangeEvent<HTMLInputElement>,
-    isCreate: boolean,
-  ) => void;
-  handleCreateMarker: () => void;
-};
+  ) => void
+  changeDatetime: (value: ZonedDateTime) => void
+  handleUploadImg: (e: ChangeEvent<HTMLInputElement>, isCreate: boolean) => void
+  handleCreateMarker: () => void
+}
 
 export const MarkerCreateModal = ({
   loading,
@@ -151,5 +148,5 @@ export const MarkerCreateModal = ({
         </ModalBody>
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}

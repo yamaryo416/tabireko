@@ -1,9 +1,9 @@
-import { supabase } from "../supabase/client";
+import { supabase } from "../supabase/client"
 
 export const getMarkerList = async () => {
-  const userData = await supabase.auth.getUser();
+  const userData = await supabase.auth.getUser()
   if (userData?.data?.user == null) {
-    return { error: null, data: null };
+    return { error: null, data: null }
   }
   return await supabase
     .from("marker")
@@ -31,8 +31,8 @@ export const getMarkerList = async () => {
       )
     `,
     )
-    .eq("user_id", userData.data.user.id);
-};
+    .eq("user_id", userData.data.user.id)
+}
 
 export const createMarker = async (data: any) => {
   return await supabase.from("marker").insert([data]).select(`
@@ -56,8 +56,8 @@ export const createMarker = async (data: any) => {
           url
         )
       )
-  `);
-};
+  `)
+}
 
 export const updateMarker = async (id: number, data: any) => {
   return await supabase.from("marker").update(data).eq("id", id).select(`
@@ -81,9 +81,9 @@ export const updateMarker = async (id: number, data: any) => {
           url
         )
       )
-  `);
-};
+  `)
+}
 
 export const deleteMarker = async (id: number) => {
-  return await supabase.from("marker").delete().eq("id", id);
-};
+  return await supabase.from("marker").delete().eq("id", id)
+}

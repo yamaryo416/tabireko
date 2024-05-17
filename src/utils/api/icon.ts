@@ -1,5 +1,5 @@
-import { supabase } from "../supabase/client";
+import { supabase } from "../supabase/client"
 
 export const getIconList = async () => {
-  return await supabase.from("icon").select("*");
-};
+  return await supabase.from("icon").select("*")
+}

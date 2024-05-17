@@ -1,6 +1,6 @@
 export type Icon = {
-  id: number;
-  created_at: string;
-  name: string;
-  url: string;
-};
+  id: number
+  created_at: string
+  name: string
+  url: string
+}

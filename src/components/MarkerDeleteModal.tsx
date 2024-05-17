@@ -1,10 +1,10 @@
-import { Modal, ModalContent, ModalBody, Button } from "@nextui-org/react";
+import { Modal, ModalContent, ModalBody, Button } from "@nextui-org/react"
 
 type PropsType = {
-  isOpen: boolean;
-  handleDelete: () => void;
-  onClose: () => void;
-};
+  isOpen: boolean
+  handleDelete: () => void
+  onClose: () => void
+}
 
 export const MarkerDeleteModal = ({
   isOpen,
@@ -35,5 +35,5 @@ export const MarkerDeleteModal = ({
         </ModalBody>
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}
