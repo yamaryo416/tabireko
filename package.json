@@ -1,26 +1,40 @@
 {
-  "name": "tabireko-base",
+  "name": "tabireko-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write src"
   },
   "dependencies": {
+    "@internationalized/date": "^3.5.3",
+    "@nextui-org/react": "^2.3.6",
+    "@react-google-maps/api": "^2.19.3",
+    "@supabase/ssr": "^0.3.0",
+    "@supabase/supabase-js": "^2.43.1",
+    "@types/googlemaps": "^3.43.3",
+    "framer-motion": "^11.1.9",
+    "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.3"
+    "supabase": "^1.167.4",
+    "use-debounce": "^10.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/google.maps": "^3.55.8",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "@types/uuid": "^9.0.8",
     "eslint": "^8",
-    "eslint-config-next": "14.2.3"
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "uuid": "^9.0.1"
   }
 }
