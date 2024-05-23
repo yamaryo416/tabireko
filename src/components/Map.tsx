@@ -49,6 +49,7 @@ export const Map = () => {
     setFlash,
     setFilterTagIds,
     setSelectedMarker,
+    onClickCurrentLoaction,
     setMarkerList,
     onSearchLocation,
     onClickSearchLocation,
@@ -98,34 +99,43 @@ export const Map = () => {
         toggleFilterTagIds={toggleFilterTagIds}
         onCloseFilterTagModal={onCloseFilterTagModal}
       />
-      <GoogleMap
-        mapContainerStyle={defaultMapContainerStyle}
-        center={centerLocation}
-        zoom={zoom}
-        options={defaultMapOptions}
-        onClick={openCreateMarkerModal}
-      >
-        {markerList.filter(markerFilter).map((marker) => (
-          <Marker
-            key={marker.id}
-            position={{ lat: marker.lat, lng: marker.lng }}
-            icon={
-              marker.tag && marker.tag.icon
-                ? marker.tag.icon.url
-                : "https://maps.google.com/mapfiles/kml/paddle/O.png"
-            }
-            onClick={(_) => onOpenDetailMarker(marker)}
-          >
-            {isDisplayBaloon && (
-              <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
-                <button onClick={() => onOpenDetailMarker(marker)}>
-                  {marker.title}
-                </button>
-              </InfoWindow>
-            )}
-          </Marker>
-        ))}
-      </GoogleMap>
+      <div className="relative">
+        <GoogleMap
+          mapContainerStyle={defaultMapContainerStyle}
+          center={centerLocation}
+          zoom={zoom}
+          options={defaultMapOptions}
+          onClick={openCreateMarkerModal}
+        >
+          {markerList.filter(markerFilter).map((marker) => (
+            <Marker
+              key={marker.id}
+              position={{ lat: marker.lat, lng: marker.lng }}
+              icon={
+                marker.tag && marker.tag.icon
+                  ? marker.tag.icon.url
+                  : "https://maps.google.com/mapfiles/kml/paddle/O.png"
+              }
+              onClick={(_) => onOpenDetailMarker(marker)}
+            >
+              {isDisplayBaloon && (
+                <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
+                  <button onClick={() => onOpenDetailMarker(marker)}>
+                    {marker.title}
+                  </button>
+                </InfoWindow>
+              )}
+            </Marker>
+          ))}
+        </GoogleMap>
+        <button
+          type="button"
+          className="absolute z-10020 bottom-[20px] left-[10px] bg-white p-2.5"
+          onClick={onClickCurrentLoaction}
+        >
+          現在地
+        </button>
+      </div>
       <MarkerCreateModal
         loading={loading}
         isOpenCreateMarkerModal={isOpenCreateMarkerModal}
