@@ -10,12 +10,14 @@ import {
   Button,
 } from "@nextui-org/react"
 import Image from "next/image"
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { MarkerDeleteModal } from "./MarkerDeleteModal"
+import { MarkerOfficialImage } from "@/types/marker_official_image"
 
 type PropsType = {
   selectedMarker: Marker | null
   selectedMarkerImgs: MarkerImage[]
+  selectedMarkerOfficialImgs: MarkerOfficialImage[]
   isOpenDetailModal: boolean
   setSelectedMarker: Dispatch<SetStateAction<Marker | null>>
   setMarkerList: Dispatch<SetStateAction<Marker[]>>
@@ -27,6 +29,7 @@ type PropsType = {
 export const MarkerDetailModal = ({
   selectedMarker,
   selectedMarkerImgs,
+  selectedMarkerOfficialImgs,
   isOpenDetailModal,
   setSelectedMarker,
   setMarkerList,
@@ -34,6 +37,7 @@ export const MarkerDetailModal = ({
   onCloseDetailModal,
   onOpenEditMarker,
 }: PropsType) => {
+  const [isOfficialOpen, setIsOfficialOpen] = useState(false)
   // マーカー削除用モーダル関連
   const {
     isOpen: isOpenDeleteMarkerModal,
@@ -63,9 +67,21 @@ export const MarkerDetailModal = ({
       placement="center"
       isOpen={isOpenDetailModal}
       onClose={onCloseDetailModal}
+      className="mx-10"
     >
       <ModalContent>
         <ModalBody className="overflow-scroll max-h-[60vh]">
+          {!!selectedMarker?.official_google_map_url &&
+            selectedMarker.official_google_map_url != "" && (
+              <a
+                href={selectedMarker.official_google_map_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500"
+              >
+                google mapで確認
+              </a>
+            )}
           <small className="text-default-500">
             {selectedMarker
               ? selectedMarker.visited_datetime.slice(0, 13).replace("T", " ")
@@ -75,7 +91,54 @@ export const MarkerDetailModal = ({
           <h4 className="font-bold text-large">
             {selectedMarker?.title || ""}
           </h4>
-          <p>{selectedMarker?.content || ""}</p>
+          <p className="whitespace-pre-wrap">{selectedMarker?.content || ""}</p>
+          {!!selectedMarker?.official_title &&
+            selectedMarker.official_title !== "" && (
+              <>
+                {isOfficialOpen ? (
+                  <>
+                    <small className="text-default-500">
+                      {selectedMarker.official_title}
+                    </small>
+                    {!!selectedMarker?.official_description &&
+                      selectedMarker.official_description !== "" && (
+                        <small className="text-default-500 whitespace-pre-wrap">
+                          {selectedMarker.official_description}
+                        </small>
+                      )}
+                    {!!selectedMarker?.official_web_url &&
+                      selectedMarker.official_web_url !== "" && (
+                        <a
+                          className="text-blue-500"
+                          href={selectedMarker.official_web_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {selectedMarker.official_web_url}
+                        </a>
+                      )}
+                    <div className="flex flex-wrap">
+                      {selectedMarkerOfficialImgs.map((img) => (
+                        <Image
+                          alt={`official-img-${img.id}`}
+                          key={img.id}
+                          src={img.url}
+                          height={400}
+                          width={400}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <button
+                    className="text-blue-500"
+                    onClick={() => setIsOfficialOpen(true)}
+                  >
+                    公式情報
+                  </button>
+                )}
+              </>
+            )}
           {selectedMarkerImgs.map((img) => (
             <Image
               key={img.id}

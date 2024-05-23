@@ -13,6 +13,10 @@ export type Marker = {
   content: string | null
   tag: Tag | null
   title: string
+  official_title: string | null
+  official_description: string | null
+  official_web_url: string | null
+  official_google_map_url: string | null
 }
 
 export type NewMarker = {
@@ -34,6 +38,10 @@ export type EditMarker = {
   dateTime: ZonedDateTime
   tagId: number
   images: MarkerImage[]
+  official_title: string
+  official_description: string
+  official_web_url: string
+  official_google_map_url: string
 }
 
 export type RequestCreateMarker = {
@@ -44,4 +52,8 @@ export type RequestCreateMarker = {
   content: string
   tag_id?: number
   title: string
+  official_title: string
+  official_description: string
+  official_web_url: string
+  official_google_map_url: string
 }

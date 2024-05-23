@@ -34,6 +34,11 @@ import { useDisclosure } from "@nextui-org/react"
 import { MarkerImage } from "@/types/marker_image"
 import { Flash } from "@/types/flash"
 import { useDebounce } from "use-debounce"
+import {
+  createMarkerOfficialImage,
+  getMarkerOfficialImage,
+} from "@/utils/api/marker_official_image"
+import { MarkerOfficialImage } from "@/types/marker_official_image"
 
 const INIT_NEW_MARKER = {
   title: "",
@@ -43,6 +48,14 @@ const INIT_NEW_MARKER = {
   dateTime: now(getLocalTimeZone()),
   tagId: 0,
   images: [],
+}
+
+type OfficialInfo = {
+  title: string
+  description: string
+  webUrl: string
+  googleMapUrl: string
+  photos: string[]
 }
 
 type ReturnType = {
@@ -67,6 +80,7 @@ type ReturnType = {
   isOpenDetailModal: boolean
   selectedMarker: Marker | null
   selectedMarkerImgs: MarkerImage[]
+  selectedMarkerOfficialImgs: MarkerOfficialImage[]
   editMarker: EditMarker | null
   isOpenEditMarkerModal: boolean
   setFlash: Dispatch<SetStateAction<Flash | null>>
@@ -131,6 +145,14 @@ export const useMap = (): ReturnType => {
   const [markerList, setMarkerList] = useState<Marker[]>([])
   // タグに設定するアイコン一覧
   const [iconList, setIconList] = useState<Icon[]>([])
+  // Google Mapに登録されている名称、画像一覧
+  const [officialInfo, setOfficialInfo] = useState<OfficialInfo>({
+    title: "",
+    description: "",
+    webUrl: "",
+    googleMapUrl: "",
+    photos: [],
+  })
   // マーカー作成用
   const [newMarker, setNewMarker] = useState<NewMarker>(INIT_NEW_MARKER)
   // マーカー編集用
@@ -141,6 +163,10 @@ export const useMap = (): ReturnType => {
   const [selectedMarkerImgs, setSelectedMarkerImgs] = useState<MarkerImage[]>(
     [],
   )
+  // マーカー詳細の公式画像一覧
+  const [selectedMarkerOfficialImgs, setSelectedMarkerOfficialImgs] = useState<
+    MarkerOfficialImage[]
+  >([])
 
   // タグ作成用
   const [newTag, setNewTag] = useState({
@@ -183,6 +209,7 @@ export const useMap = (): ReturnType => {
     onClose: onCloseFilterTagModal,
   } = useDisclosure()
 
+  // 現在地を取得するイベント
   const onClickCurrentLoaction = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -218,12 +245,46 @@ export const useMap = (): ReturnType => {
 
   // 地図上にてクリックした地点の座標を保存し、マーカー作成モーダルを開くイベント
   const openCreateMarkerModal = (e: google.maps.MapMouseEvent) => {
+    console.log(e)
+    // @ts-ignore
     setNewMarker((prevNewMarker) => ({
       ...prevNewMarker,
       lat: e.latLng?.lat() || 0,
       lng: e.latLng?.lng() || 0,
     }))
     onOpenCreateMarkerModal()
+    // @ts-ignore
+    const { placeId } = e
+    if (placeId == null) return
+    fetch(
+      `https://places.googleapis.com/v1/places/${placeId}?fields=*&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`,
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res)
+        if (res.photos != null) {
+          // @ts-ignore
+          res.photos.map((photo) => {
+            fetch(
+              `https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}&maxWidthPx=400`,
+            )
+              .then((res) => {
+                setOfficialInfo((prevOfficialInfo) => ({
+                  ...prevOfficialInfo,
+                  photos: [...prevOfficialInfo.photos, res.url],
+                }))
+              })
+              .catch((err) => console.log(err))
+          })
+        }
+        setOfficialInfo((prevOfficialInfo) => ({
+          ...prevOfficialInfo,
+          title: res.displayName ? res.displayName.text : "",
+          description: res.editorialSummary ? res.editorialSummary.text : "",
+          webUrl: res.websiteUri || "",
+          googleMapUrl: res.googleMapsUri || "",
+        }))
+      })
   }
 
   // マーカー作成 各カラム編集用イベント
@@ -301,6 +362,10 @@ export const useMap = (): ReturnType => {
       visited_datetime: date,
       lat,
       lng,
+      official_title: officialInfo.title,
+      official_description: officialInfo.description,
+      official_web_url: officialInfo.webUrl,
+      official_google_map_url: officialInfo.googleMapUrl,
     }
     if (tagId !== 0) {
       data = { ...data, tag_id: tagId }
@@ -326,11 +391,34 @@ export const useMap = (): ReturnType => {
         return
       }
     }
+    const officialImgData = officialInfo.photos.map((photo) => {
+      return {
+        marker_id: resCreateMarkerData[0].id,
+        url: photo,
+      }
+    })
+    if (officialImgData.length !== 0) {
+      const { error: resCreateMarkerOfficialImgError } =
+        await createMarkerOfficialImage(officialImgData)
+      if (resCreateMarkerOfficialImgError) {
+        setFlash({ kind: "failed", message: "記録の作成に失敗しました" })
+        setLoading(false)
+        return
+      }
+    }
+
     setMarkerList((prevMarkerList) => [
       ...prevMarkerList,
       resCreateMarkerData[0],
     ])
     setFlash({ kind: "success", message: "記録の作成に成功しました" })
+    setOfficialInfo({
+      title: "",
+      description: "",
+      webUrl: "",
+      googleMapUrl: "",
+      photos: [],
+    })
     setNewMarker(INIT_NEW_MARKER)
     setLoading(false)
     onCloseCreateMarkerModal()
@@ -365,18 +453,40 @@ export const useMap = (): ReturnType => {
     setSelectedMarkerImgs(data)
   }
 
+  // マーカー詳細に紐づく公式画像一覧を取得
+  const getOfficialImageUrl = async (id: number) => {
+    let { data, error } = await getMarkerOfficialImage(id)
+    if (!!error || data == null) {
+      setFlash({ kind: "failed", message: "画像取得に失敗しました" })
+      return
+    }
+    setSelectedMarkerOfficialImgs(data)
+  }
+
   // 対象のマーカー詳細モーダルを開くイベント
   const onOpenDetailMarker = (marker: Marker) => {
     setSelectedMarker(marker)
     onOpenDetailModal()
     getImageUrl(marker.id)
+    getOfficialImageUrl(marker.id)
   }
 
   // マーカー詳細からマーカー編集モーダルを開くイベント
   const onOpenEditMarker = () => {
     if (selectedMarker == null) return
-    const { id, visited_datetime, lat, lng, content, tag, title } =
-      selectedMarker
+    const {
+      id,
+      visited_datetime,
+      lat,
+      lng,
+      content,
+      tag,
+      title,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
+    } = selectedMarker
     const dateTime = parseAbsoluteToLocal(visited_datetime + "Z")
     setEditMarker({
       id,
@@ -387,6 +497,10 @@ export const useMap = (): ReturnType => {
       dateTime,
       tagId: tag?.id ?? 0,
       images: selectedMarkerImgs,
+      official_title: official_title || "",
+      official_description: official_description || "",
+      official_web_url: official_web_url || "",
+      official_google_map_url: official_google_map_url || "",
     })
     onOpenEditMarkerModal()
   }
@@ -420,7 +534,20 @@ export const useMap = (): ReturnType => {
     if (!editMarker) return
     if (!selectedMarkerImgs) return
     setLoading(true)
-    const { id, title, content, lat, lng, dateTime, tagId, images } = editMarker
+    const {
+      id,
+      title,
+      content,
+      lat,
+      lng,
+      dateTime,
+      tagId,
+      images,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
+    } = editMarker
     const userData = await supabase.auth.getUser()
     const userId = userData?.data?.user?.id
     if (userId == null) {
@@ -441,6 +568,10 @@ export const useMap = (): ReturnType => {
       visited_datetime: date,
       lat,
       lng,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
     }
     if (tagId !== 0) {
       data = { ...data, tag_id: tagId }
@@ -602,6 +733,7 @@ export const useMap = (): ReturnType => {
     isOpenDetailModal,
     selectedMarker,
     selectedMarkerImgs,
+    selectedMarkerOfficialImgs,
     isOpenEditMarkerModal,
     editMarker,
     setFlash,
