@@ -17,6 +17,10 @@ export const getMarkerList = async () => {
       lng,
       content,
       title,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
       tag (
         id,
         created_at,
@@ -44,6 +48,10 @@ export const createMarker = async (data: any) => {
       lng,
       content,
       title,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
       tag (
         id,
         created_at,
@@ -69,6 +77,10 @@ export const updateMarker = async (id: number, data: any) => {
       lng,
       content,
       title,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
       tag (
         id,
         created_at,

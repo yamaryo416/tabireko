@@ -44,6 +44,7 @@ export const Map = () => {
     isOpenDetailModal,
     selectedMarker,
     selectedMarkerImgs,
+    selectedMarkerOfficialImgs,
     isOpenEditMarkerModal,
     editMarker,
     setFlash,
@@ -159,6 +160,7 @@ export const Map = () => {
       <MarkerDetailModal
         selectedMarker={selectedMarker}
         selectedMarkerImgs={selectedMarkerImgs}
+        selectedMarkerOfficialImgs={selectedMarkerOfficialImgs}
         setSelectedMarker={setSelectedMarker}
         setMarkerList={setMarkerList}
         setFlash={setFlash}

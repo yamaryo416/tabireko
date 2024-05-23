@@ -62,6 +62,10 @@ export type Database = {
           id: number
           lat: number
           lng: number
+          official_description: string | null
+          official_google_map_url: string | null
+          official_title: string | null
+          official_web_url: string | null
           tag_id: number | null
           title: string
           user_id: string
@@ -73,6 +77,10 @@ export type Database = {
           id?: number
           lat: number
           lng: number
+          official_description?: string | null
+          official_google_map_url?: string | null
+          official_title?: string | null
+          official_web_url?: string | null
           tag_id?: number | null
           title: string
           user_id: string
@@ -84,6 +92,10 @@ export type Database = {
           id?: number
           lat?: number
           lng?: number
+          official_description?: string | null
+          official_google_map_url?: string | null
+          official_title?: string | null
+          official_web_url?: string | null
           tag_id?: number | null
           title?: string
           user_id?: string
@@ -141,6 +153,35 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marker_official_img: {
+        Row: {
+          created_at: string
+          id: number
+          marker_id: number | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          marker_id?: number | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          marker_id?: number | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marker_official_img_marker_id_fkey"
+            columns: ["marker_id"]
+            isOneToOne: false
+            referencedRelation: "marker"
             referencedColumns: ["id"]
           },
         ]

@@ -12,8 +12,13 @@ const nextConfig = {
         hostname: "maps.google.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+      },
     ],
   },
-};
+}
 
 export default nextConfig;
