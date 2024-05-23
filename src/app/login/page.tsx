@@ -16,6 +16,7 @@ const LoginPage = () => {
     try {
       await login(formData)
     } catch {
+      setLoading(false)
       setError("ログインに失敗しました")
     }
   }

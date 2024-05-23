@@ -73,6 +73,7 @@ type ReturnType = {
   setFilterTagIds: Dispatch<SetStateAction<number[]>>
   setSelectedMarker: Dispatch<SetStateAction<Marker | null>>
   setMarkerList: Dispatch<SetStateAction<Marker[]>>
+  onClickCurrentLoaction: () => void
   onSearchLocation: (e: ChangeEvent<HTMLInputElement>) => void
   onClickSearchLocation: (result: google.maps.GeocoderResult) => void
   onOpenFilterTagModal: () => void
@@ -181,6 +182,20 @@ export const useMap = (): ReturnType => {
     onOpen: onOpenFilterTagModal,
     onClose: onCloseFilterTagModal,
   } = useDisclosure()
+
+  const onClickCurrentLoaction = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCenterLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        })
+      },
+      (err) => {
+        console.log(err)
+      },
+    )
+  }
 
   // 検索キーワード変更イベント
   const onSearchLocation = (e: ChangeEvent<HTMLInputElement>) => {
@@ -554,6 +569,20 @@ export const useMap = (): ReturnType => {
     )
   }, [confirmedSearchWord])
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCenterLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        })
+      },
+      (err) => {
+        console.log(err)
+      },
+    )
+  }, [])
+
   return {
     zoom,
     centerLocation,
@@ -579,6 +608,7 @@ export const useMap = (): ReturnType => {
     setFilterTagIds,
     setSelectedMarker,
     setMarkerList,
+    onClickCurrentLoaction,
     onSearchLocation,
     onClickSearchLocation,
     onOpenFilterTagModal,
