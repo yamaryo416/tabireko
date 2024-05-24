@@ -261,10 +261,9 @@ export const useMap = (): ReturnType => {
     )
       .then((res) => res.json())
       .then((res) => {
-        console.log(res)
         if (res.photos != null) {
           // @ts-ignore
-          res.photos.map((photo) => {
+          res.photos.slice(0, 3).map((photo) => {
             fetch(
               `https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}&maxWidthPx=400`,
             )
