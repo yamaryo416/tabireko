@@ -51,6 +51,9 @@ export const Map = () => {
     isOpenEditMarkerModal,
     isOpenSearchLocationFromImgModal,
     editMarker,
+    isOpenCalendarModal,
+    onOpenCalendarModal,
+    onCloseCalendarModal,
     setDisplayMode,
     setFlash,
     setFilterTagIds,
@@ -102,6 +105,10 @@ export const Map = () => {
         filterTagIds={filterTagIds}
         allImgList={allImgList}
         isOpenSearchLocationFromImgModal={isOpenSearchLocationFromImgModal}
+        markerList={markerList}
+        isOpenCalendarModal={isOpenCalendarModal}
+        onOpenCalendarModal={onOpenCalendarModal}
+        onCloseCalendarModal={onCloseCalendarModal}
         setDisplayMode={setDisplayMode}
         setFilterTagIds={setFilterTagIds}
         onOpenFilterTagModal={onOpenFilterTagModal}
