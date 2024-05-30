@@ -86,7 +86,7 @@ export const MarkerCreateModal = ({
               granularity="hour"
               label="日時"
               labelPlacement="outside"
-              value={newMarker.dateTime}
+              value={newMarker.visited_datetime}
               onChange={changeDatetime}
             />
             <Textarea

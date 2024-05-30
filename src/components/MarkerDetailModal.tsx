@@ -13,6 +13,8 @@ import Image from "next/image"
 import { Dispatch, SetStateAction, useState } from "react"
 import { MarkerDeleteModal } from "./MarkerDeleteModal"
 import { MarkerOfficialImage } from "@/types/marker_official_image"
+import { toCalendarDateTime } from "@internationalized/date"
+import { formatDatetime } from "@/utils/datetime"
 
 type PropsType = {
   selectedMarker: Marker | null
@@ -84,9 +86,8 @@ export const MarkerDetailModal = ({
             )}
           <small className="text-default-500">
             {selectedMarker
-              ? selectedMarker.visited_datetime.slice(0, 13).replace("T", " ")
+              ? formatDatetime(selectedMarker.visited_datetime)
               : ""}
-            時
           </small>
           <h4 className="font-bold text-large">
             {selectedMarker?.title || ""}

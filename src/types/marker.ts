@@ -7,7 +7,7 @@ export type Marker = {
   id: number
   created_at: string
   user_id: string
-  visited_datetime: string
+  visited_datetime: ZonedDateTime
   lat: number
   lng: number
   content: string | null
@@ -24,7 +24,7 @@ export type NewMarker = {
   content: string
   lat: number
   lng: number
-  dateTime: ZonedDateTime
+  visited_datetime: ZonedDateTime
   tagId: number
   images: string[]
 }
@@ -35,7 +35,7 @@ export type EditMarker = {
   content: string
   lat: number
   lng: number
-  dateTime: ZonedDateTime
+  visited_datetime: ZonedDateTime
   tagId: number
   images: MarkerImage[]
   official_title: string
