@@ -18,6 +18,8 @@ import { Dispatch, SetStateAction } from "react"
 import { DisplayMode } from "@/types/page"
 import { SearchLocationFromImageModal } from "./SearchLocationFromImageModal"
 import { MarkerImage } from "@/types/marker_image"
+import { Marker } from "@/types/marker"
+import { CalendarModal } from "./CalendarModal"
 
 const DISPLAY_MAPPING = {
   img: "画像表示",
@@ -32,6 +34,10 @@ type PropsType = {
   filterTagIds: number[]
   isOpenSearchLocationFromImgModal: boolean
   allImgList: MarkerImage[]
+  markerList: Marker[]
+  isOpenCalendarModal: boolean
+  onOpenCalendarModal: () => void
+  onCloseCalendarModal: () => void
   setDisplayMode: Dispatch<SetStateAction<DisplayMode>>
   setFilterTagIds: Dispatch<SetStateAction<number[]>>
   onOpenFilterTagModal: () => void
@@ -49,6 +55,10 @@ export const FilterTag = ({
   filterTagIds,
   isOpenSearchLocationFromImgModal,
   allImgList,
+  markerList,
+  isOpenCalendarModal,
+  onOpenCalendarModal,
+  onCloseCalendarModal,
   setDisplayMode,
   setFilterTagIds,
   onOpenFilterTagModal,
@@ -106,6 +116,22 @@ export const FilterTag = ({
             aria-label="Dropdown menu with description"
           >
             <DropdownSection title="メニュー">
+              <DropdownItem
+                key="calendar"
+                description="calendar"
+                startContent={
+                  <Image
+                    src="images/calendar_icon.svg"
+                    alt="カレンダーのアイコン"
+                    width={20}
+                    height={20}
+                  />
+                }
+                onClick={onOpenCalendarModal}
+                onPress={onOpenCalendarModal}
+              >
+                カレンダー
+              </DropdownItem>
               <DropdownItem
                 key="search_location_from_img"
                 description="image list"
@@ -193,6 +219,12 @@ export const FilterTag = ({
         allImgList={allImgList}
         isOpenModal={isOpenSearchLocationFromImgModal}
         onCloseModal={onCloseSearchLocationFromImgModal}
+        onClickSearchLocationFromImg={onClickSearchLocationFromImg}
+      />
+      <CalendarModal
+        markerList={markerList}
+        isOpenModal={isOpenCalendarModal}
+        onCloseModal={onCloseCalendarModal}
         onClickSearchLocationFromImg={onClickSearchLocationFromImg}
       />
     </>

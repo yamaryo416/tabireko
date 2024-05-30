@@ -89,6 +89,9 @@ type ReturnType = {
   selectedMarkerOfficialImgs: MarkerOfficialImage[]
   editMarker: EditMarker | null
   isOpenEditMarkerModal: boolean
+  isOpenCalendarModal: boolean
+  onOpenCalendarModal: () => void
+  onCloseCalendarModal: () => void
   setDisplayMode: Dispatch<SetStateAction<DisplayMode>>
   setFlash: Dispatch<SetStateAction<Flash | null>>
   setFilterTagIds: Dispatch<SetStateAction<number[]>>
@@ -231,6 +234,13 @@ export const useMap = (): ReturnType => {
     onClose: onCloseSearchLocationFromImgModal,
   } = useDisclosure()
 
+  // カレンダーモーダル関連
+  const {
+    isOpen: isOpenCalendarModal,
+    onOpen: onOpenCalendarModal,
+    onClose: onCloseCalendarModal,
+  } = useDisclosure()
+
   // 現在地を取得するイベント
   const onClickCurrentLoaction = () => {
     navigator.geolocation.getCurrentPosition(
@@ -266,19 +276,16 @@ export const useMap = (): ReturnType => {
     setSearchWord("")
   }
 
-  // 画像をクリックした際に、対応するマーカーを中止に持ってくるイベント
+  // 画像をクリックした際に、対応するマーカーを中心に持ってくるイベント
   const onClickSearchLocationFromImg = (markerId: number) => {
-    console.log(markerId)
-    console.log(markerList)
     const targetMarker = markerList.find((marker) => marker.id === markerId)
-    console.log("hogehoge")
-    console.log(targetMarker)
     if (targetMarker == null) return
     setCenterLocation({
       lat: targetMarker.lat,
       lng: targetMarker.lng,
     })
     setZoom(15)
+    onOpenDetailMarker(targetMarker)
     onCloseSearchLocationFromImgModal()
   }
 
@@ -819,6 +826,9 @@ export const useMap = (): ReturnType => {
     selectedMarkerOfficialImgs,
     isOpenEditMarkerModal,
     editMarker,
+    isOpenCalendarModal,
+    onOpenCalendarModal,
+    onCloseCalendarModal,
     setDisplayMode,
     setFlash,
     setFilterTagIds,
