@@ -45,7 +45,7 @@ const INIT_NEW_MARKER = {
   content: "",
   lat: 0,
   lng: 0,
-  dateTime: now(getLocalTimeZone()),
+  visited_datetime: now(getLocalTimeZone()),
   tagId: 0,
   images: [],
 }
@@ -296,7 +296,10 @@ export const useMap = (): ReturnType => {
 
   // マーカー作成 日時編集用イベント
   const changeDatetime = (value: ZonedDateTime) => {
-    setNewMarker((prevNewMarker) => ({ ...prevNewMarker, dateTime: value }))
+    setNewMarker((prevNewMarker) => ({
+      ...prevNewMarker,
+      visited_datetime: value,
+    }))
   }
 
   // マーカー作成 画像投稿用イベント
@@ -340,7 +343,8 @@ export const useMap = (): ReturnType => {
   // マーカー作成イベント
   const handleCreateMarker = async () => {
     setLoading(true)
-    const { title, content, lat, lng, dateTime, tagId, images } = newMarker
+    const { title, content, lat, lng, visited_datetime, tagId, images } =
+      newMarker
     const userData = await supabase.auth.getUser()
     const userId = userData?.data?.user?.id
     if (userId == null) {
@@ -349,10 +353,10 @@ export const useMap = (): ReturnType => {
       return
     }
     const date = new Date(
-      dateTime.year,
-      dateTime.month - 1,
-      dateTime.day,
-      dateTime.hour + 9,
+      visited_datetime.year,
+      visited_datetime.month - 1,
+      visited_datetime.day,
+      visited_datetime.hour,
     )
     let data: RequestCreateMarker = {
       title,
@@ -406,9 +410,14 @@ export const useMap = (): ReturnType => {
       }
     }
 
+    const parseDateMarkerList = resCreateMarkerData.map((item) => ({
+      ...item,
+      visited_datetime: parseAbsoluteToLocal(item.visited_datetime),
+    }))
+
     setMarkerList((prevMarkerList) => [
       ...prevMarkerList,
-      resCreateMarkerData[0],
+      parseDateMarkerList[0],
     ])
     setFlash({ kind: "success", message: "記録の作成に成功しました" })
     setOfficialInfo({
@@ -486,14 +495,13 @@ export const useMap = (): ReturnType => {
       official_web_url,
       official_google_map_url,
     } = selectedMarker
-    const dateTime = parseAbsoluteToLocal(visited_datetime + "Z")
     setEditMarker({
       id,
       title,
       content: content ?? "",
       lat,
       lng,
-      dateTime,
+      visited_datetime,
       tagId: tag?.id ?? 0,
       images: selectedMarkerImgs,
       official_title: official_title || "",
@@ -516,7 +524,7 @@ export const useMap = (): ReturnType => {
   // マーカー編集 日時編集用イベント
   const changeEditDatetime = (value: ZonedDateTime) => {
     if (editMarker == null) return
-    setEditMarker({ ...editMarker, dateTime: value })
+    setEditMarker({ ...editMarker, visited_datetime: value })
   }
 
   // マーカー編集 画像削除用イベント
@@ -539,7 +547,7 @@ export const useMap = (): ReturnType => {
       content,
       lat,
       lng,
-      dateTime,
+      visited_datetime,
       tagId,
       images,
       official_title,
@@ -555,10 +563,10 @@ export const useMap = (): ReturnType => {
       return
     }
     const date = new Date(
-      dateTime.year,
-      dateTime.month - 1,
-      dateTime.day,
-      dateTime.hour + 9,
+      visited_datetime.year,
+      visited_datetime.month - 1,
+      visited_datetime.day,
+      visited_datetime.hour,
     )
     let data: RequestCreateMarker = {
       title,
@@ -614,8 +622,17 @@ export const useMap = (): ReturnType => {
         return
       }
     }
-    setMarkerList((prevMarkerList) => [...prevMarkerList, resEditMarkerData[0]])
-    setSelectedMarker(resEditMarkerData[0])
+
+    const parseDateMarkerList = resEditMarkerData.map((item) => ({
+      ...item,
+      visited_datetime: parseAbsoluteToLocal(item.visited_datetime),
+    }))
+
+    setMarkerList((prevMarkerList) => [
+      ...prevMarkerList,
+      parseDateMarkerList[0],
+    ])
+    setSelectedMarker(parseDateMarkerList[0])
     setFlash({ kind: "success", message: "記録の編集に成功しました" })
     setNewMarker(INIT_NEW_MARKER)
     await getImageUrl(id)
@@ -655,7 +672,12 @@ export const useMap = (): ReturnType => {
       setFlash({ kind: "failed", message: "マーカー一覧取得に失敗しました" })
       return
     }
-    setMarkerList(data)
+
+    const parseDateMarkerList = data.map((item) => ({
+      ...item,
+      visited_datetime: parseAbsoluteToLocal(item.visited_datetime),
+    }))
+    setMarkerList(parseDateMarkerList)
   }
 
   // タグ一覧取得

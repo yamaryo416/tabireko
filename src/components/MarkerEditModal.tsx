@@ -90,7 +90,7 @@ export const MarkerEditModal = ({
               granularity="hour"
               label="日時"
               labelPlacement="outside"
-              value={editMarker.dateTime}
+              value={editMarker.visited_datetime}
               onChange={changeDatetime}
             />
             <Textarea
