@@ -5,3 +5,5 @@ export type MarkerImage = {
   url: string
   user_id: string | null
 }
+
+export type EachMarkerImage = { [key: number]: string }

@@ -28,10 +28,11 @@ import { supabase } from "@/utils/supabase/client"
 import {
   createMarkerImage,
   deleteMakerImage,
+  getEachMarkerImage,
   getMarkerImage,
 } from "@/utils/api/marker_image"
 import { useDisclosure } from "@nextui-org/react"
-import { MarkerImage } from "@/types/marker_image"
+import { EachMarkerImage, MarkerImage } from "@/types/marker_image"
 import { Flash } from "@/types/flash"
 import { useDebounce } from "use-debounce"
 import {
@@ -39,6 +40,7 @@ import {
   getMarkerOfficialImage,
 } from "@/utils/api/marker_official_image"
 import { MarkerOfficialImage } from "@/types/marker_official_image"
+import { DisplayMode } from "@/types/page"
 
 const INIT_NEW_MARKER = {
   title: "",
@@ -59,6 +61,7 @@ type OfficialInfo = {
 }
 
 type ReturnType = {
+  displayMode: DisplayMode
   zoom: number
   centerLocation: {
     lat: number
@@ -72,8 +75,11 @@ type ReturnType = {
   isOpenFilterTagModal: boolean
   filterTagIds: number[]
   markerList: Marker[]
+  allImgList: MarkerImage[]
+  eachImgList: EachMarkerImage
   isOpenCreateTagModal: boolean
   isOpenCreateMarkerModal: boolean
+  isOpenSearchLocationFromImgModal: boolean
   newMarker: NewMarker
   newTag: { name: string; icon_id: number }
   iconList: Icon[]
@@ -83,6 +89,7 @@ type ReturnType = {
   selectedMarkerOfficialImgs: MarkerOfficialImage[]
   editMarker: EditMarker | null
   isOpenEditMarkerModal: boolean
+  setDisplayMode: Dispatch<SetStateAction<DisplayMode>>
   setFlash: Dispatch<SetStateAction<Flash | null>>
   setFilterTagIds: Dispatch<SetStateAction<number[]>>
   setSelectedMarker: Dispatch<SetStateAction<Marker | null>>
@@ -90,6 +97,7 @@ type ReturnType = {
   onClickCurrentLoaction: () => void
   onSearchLocation: (e: ChangeEvent<HTMLInputElement>) => void
   onClickSearchLocation: (result: google.maps.GeocoderResult) => void
+  onClickSearchLocationFromImg: (markerId: number) => void
   onOpenFilterTagModal: () => void
   onCloseFilterTagModal: () => void
   toggleFilterTagIds: (id: number) => void
@@ -97,8 +105,10 @@ type ReturnType = {
   markerFilter: (marker: Marker) => boolean
   onOpenDetailMarker: (marker: Marker) => void
   onOpenCreateTagModal: () => void
+  onOpenSearchLocationFromImgModal: () => void
   onCloseCreateTagModal: () => void
   onCloseCreateMarkerModal: () => void
+  onCloseSearchLocationFromImgModal: () => void
   changeNewMarker: (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => void
@@ -119,6 +129,8 @@ type ReturnType = {
 }
 
 export const useMap = (): ReturnType => {
+  // 一覧表示の際に、画像or吹き出しor何も表示しないを制御する
+  const [displayMode, setDisplayMode] = useState<DisplayMode>("balloon")
   // google mapのズームの倍率(最大20)
   const [zoom, setZoom] = useState(15)
   // 表示するgoogle mapの中心位置
@@ -143,6 +155,9 @@ export const useMap = (): ReturnType => {
   const [filterTagIds, setFilterTagIds] = useState<number[]>([])
   // マーカー一覧
   const [markerList, setMarkerList] = useState<Marker[]>([])
+  const [allImgList, setAllImgList] = useState<MarkerImage[]>([])
+  // マーカー一覧に紐づく画像一覧
+  const [eachImgList, setEachImgList] = useState<EachMarkerImage>({})
   // タグに設定するアイコン一覧
   const [iconList, setIconList] = useState<Icon[]>([])
   // Google Mapに登録されている名称、画像一覧
@@ -209,6 +224,13 @@ export const useMap = (): ReturnType => {
     onClose: onCloseFilterTagModal,
   } = useDisclosure()
 
+  // 画像検索モーダル関連
+  const {
+    isOpen: isOpenSearchLocationFromImgModal,
+    onOpen: onOpenSearchLocationFromImgModal,
+    onClose: onCloseSearchLocationFromImgModal,
+  } = useDisclosure()
+
   // 現在地を取得するイベント
   const onClickCurrentLoaction = () => {
     navigator.geolocation.getCurrentPosition(
@@ -217,6 +239,7 @@ export const useMap = (): ReturnType => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         })
+        setZoom(13)
       },
       (err) => {
         console.log(err)
@@ -241,6 +264,22 @@ export const useMap = (): ReturnType => {
     setCenterLocation(center)
     setSearchSuggestList([])
     setSearchWord("")
+  }
+
+  // 画像をクリックした際に、対応するマーカーを中止に持ってくるイベント
+  const onClickSearchLocationFromImg = (markerId: number) => {
+    console.log(markerId)
+    console.log(markerList)
+    const targetMarker = markerList.find((marker) => marker.id === markerId)
+    console.log("hogehoge")
+    console.log(targetMarker)
+    if (targetMarker == null) return
+    setCenterLocation({
+      lat: targetMarker.lat,
+      lng: targetMarker.lng,
+    })
+    setZoom(15)
+    onCloseSearchLocationFromImgModal()
   }
 
   // 地図上にてクリックした地点の座標を保存し、マーカー作成モーダルを開くイベント
@@ -677,6 +716,8 @@ export const useMap = (): ReturnType => {
       ...item,
       visited_datetime: parseAbsoluteToLocal(item.visited_datetime),
     }))
+    const ids = parseDateMarkerList.map((item) => item.id)
+    getEachMarkerImageAndSetImage(ids)
     setMarkerList(parseDateMarkerList)
   }
 
@@ -699,6 +740,23 @@ export const useMap = (): ReturnType => {
       return
     }
     setIconList(data)
+  }
+
+  // マーカーに紐づく画像一覧を取得
+  const getEachMarkerImageAndSetImage = async (ids: number[]) => {
+    let { data, error } = await getEachMarkerImage(ids)
+    if (!!error || data == null) {
+      setFlash({ kind: "failed", message: "画像取得に失敗しました" })
+      return
+    }
+    setAllImgList(data)
+    let newImageList: EachMarkerImage = {}
+    data.forEach((item) => {
+      if (item.marker_id != null && newImageList[item.marker_id] == null) {
+        newImageList[item.marker_id] = item.url
+      }
+    })
+    setEachImgList(newImageList)
   }
 
   useEffect(() => {
@@ -736,6 +794,7 @@ export const useMap = (): ReturnType => {
   }, [])
 
   return {
+    displayMode,
     zoom,
     centerLocation,
     loading,
@@ -746,8 +805,11 @@ export const useMap = (): ReturnType => {
     isOpenFilterTagModal,
     filterTagIds,
     markerList,
+    allImgList,
+    eachImgList,
     isOpenCreateTagModal,
     isOpenCreateMarkerModal,
+    isOpenSearchLocationFromImgModal,
     newMarker,
     newTag,
     iconList,
@@ -757,6 +819,7 @@ export const useMap = (): ReturnType => {
     selectedMarkerOfficialImgs,
     isOpenEditMarkerModal,
     editMarker,
+    setDisplayMode,
     setFlash,
     setFilterTagIds,
     setSelectedMarker,
@@ -764,8 +827,11 @@ export const useMap = (): ReturnType => {
     onClickCurrentLoaction,
     onSearchLocation,
     onClickSearchLocation,
+    onClickSearchLocationFromImg,
     onOpenFilterTagModal,
+    onOpenSearchLocationFromImgModal,
     onCloseFilterTagModal,
+    onCloseSearchLocationFromImgModal,
     toggleFilterTagIds,
     openCreateMarkerModal,
     markerFilter,
