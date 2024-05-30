@@ -287,6 +287,7 @@ export const useMap = (): ReturnType => {
     setZoom(15)
     onOpenDetailMarker(targetMarker)
     onCloseSearchLocationFromImgModal()
+    onCloseCalendarModal()
   }
 
   // 地図上にてクリックした地点の座標を保存し、マーカー作成モーダルを開くイベント
