@@ -67,16 +67,25 @@ export const FilterTag = ({
             <Button variant="light">{DISPLAY_MAPPING[displayMode]}</Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="Static Actions" variant="light">
-            <DropdownItem key="new" onClick={() => setDisplayMode("img")}>
+            <DropdownItem
+              key="img"
+              onPress={() => setDisplayMode("img")}
+              onClick={() => setDisplayMode("img")}
+            >
               画像表示
             </DropdownItem>
             <DropdownItem
               key="balloon"
+              onPress={() => setDisplayMode("balloon")}
               onClick={() => setDisplayMode("balloon")}
             >
               吹き出し表示
             </DropdownItem>
-            <DropdownItem key="off" onClick={() => setDisplayMode("off")}>
+            <DropdownItem
+              key="off"
+              onPress={() => setDisplayMode("off")}
+              onClick={() => setDisplayMode("off")}
+            >
               OFF
             </DropdownItem>
           </DropdownMenu>
@@ -109,6 +118,7 @@ export const FilterTag = ({
                   />
                 }
                 onClick={onOpenSearchLocationFromImgModal}
+                onPress={onOpenSearchLocationFromImgModal}
               >
                 画像一覧
               </DropdownItem>
@@ -124,6 +134,7 @@ export const FilterTag = ({
                   />
                 }
                 onClick={onOpenFilterTagModal}
+                onPress={onOpenFilterTagModal}
               >
                 タグで絞り込み
               </DropdownItem>
