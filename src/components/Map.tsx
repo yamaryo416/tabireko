@@ -8,8 +8,8 @@ import { MarkerCreateModal } from "./MarkerCreateModal"
 import { TagCreateModal } from "./TagCreateModal"
 import { MarkerDetailModal } from "./MarkerDetailModal"
 import { FlashMessage } from "./FlashMessage"
-import { useState } from "react"
 import { MarkerEditModal } from "./MarkerEditModal"
+import Image from "next/image"
 
 export const defaultMapContainerStyle = {
   width: "100%",
@@ -26,6 +26,7 @@ const defaultMapOptions: google.maps.MapOptions = {
 
 export const Map = () => {
   const {
+    displayMode,
     zoom,
     loading,
     flash,
@@ -36,6 +37,8 @@ export const Map = () => {
     isOpenFilterTagModal,
     filterTagIds,
     markerList,
+    allImgList,
+    eachImgList,
     isOpenCreateTagModal,
     isOpenCreateMarkerModal,
     newMarker,
@@ -46,7 +49,9 @@ export const Map = () => {
     selectedMarkerImgs,
     selectedMarkerOfficialImgs,
     isOpenEditMarkerModal,
+    isOpenSearchLocationFromImgModal,
     editMarker,
+    setDisplayMode,
     setFlash,
     setFilterTagIds,
     setSelectedMarker,
@@ -76,9 +81,10 @@ export const Map = () => {
     handleEditMarker,
     removeImage,
     onCloseEditMarkerModal,
+    onOpenSearchLocationFromImgModal,
+    onCloseSearchLocationFromImgModal,
+    onClickSearchLocationFromImg,
   } = useMap()
-
-  const [isDisplayBaloon, setIsDisplayBaloon] = useState(true)
 
   return (
     <div className="fixed left-0 top-[57px] w-full">
@@ -90,15 +96,20 @@ export const Map = () => {
         onSearchLocation={onSearchLocation}
       />
       <FilterTag
-        isDisplayBaloon={isDisplayBaloon}
+        displayMode={displayMode}
         tagList={tagList}
         isOpenFilterTagModal={isOpenFilterTagModal}
         filterTagIds={filterTagIds}
-        setIsDisplayBaloon={setIsDisplayBaloon}
+        allImgList={allImgList}
+        isOpenSearchLocationFromImgModal={isOpenSearchLocationFromImgModal}
+        setDisplayMode={setDisplayMode}
         setFilterTagIds={setFilterTagIds}
         onOpenFilterTagModal={onOpenFilterTagModal}
         toggleFilterTagIds={toggleFilterTagIds}
         onCloseFilterTagModal={onCloseFilterTagModal}
+        onClickSearchLocationFromImg={onClickSearchLocationFromImg}
+        onOpenSearchLocationFromImgModal={onOpenSearchLocationFromImgModal}
+        onCloseSearchLocationFromImgModal={onCloseSearchLocationFromImgModal}
       />
       <div className="relative">
         <GoogleMap
@@ -119,10 +130,26 @@ export const Map = () => {
               }
               onClick={(_) => onOpenDetailMarker(marker)}
             >
-              {isDisplayBaloon && (
+              {displayMode === "balloon" && (
                 <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
                   <button onClick={() => onOpenDetailMarker(marker)}>
                     {marker.title}
+                  </button>
+                </InfoWindow>
+              )}
+              {displayMode === "img" && (
+                <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
+                  <button onClick={() => onOpenDetailMarker(marker)}>
+                    {eachImgList[marker.id] == null ? (
+                      "画像なし"
+                    ) : (
+                      <Image
+                        alt="その地点の画像"
+                        src={eachImgList[marker.id]}
+                        width={50}
+                        height={50}
+                      />
+                    )}
                   </button>
                 </InfoWindow>
               )}

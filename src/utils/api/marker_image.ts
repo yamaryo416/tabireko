@@ -1,5 +1,9 @@
 import { supabase } from "../supabase/client"
 
+export const getEachMarkerImage = async (ids: number[]) => {
+  return await supabase.from("marker_img").select("*").in("marker_id", ids)
+}
+
 export const getMarkerImage = async (id: number) => {
   return await supabase.from("marker_img").select("*").eq("marker_id", id)
 }

@@ -2,6 +2,11 @@ import { Tag } from "@/types/tag"
 import {
   Button,
   Checkbox,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSection,
+  DropdownTrigger,
   Link,
   Modal,
   ModalBody,
@@ -10,42 +15,121 @@ import {
 } from "@nextui-org/react"
 import Image from "next/image"
 import { Dispatch, SetStateAction } from "react"
+import { DisplayMode } from "@/types/page"
+import { SearchLocationFromImageModal } from "./SearchLocationFromImageModal"
+import { MarkerImage } from "@/types/marker_image"
+
+const DISPLAY_MAPPING = {
+  img: "画像表示",
+  balloon: "吹き出し表示",
+  off: "OFF",
+}
 
 type PropsType = {
-  isDisplayBaloon: boolean
+  displayMode: DisplayMode
   tagList: Tag[]
   isOpenFilterTagModal: boolean
   filterTagIds: number[]
-  setIsDisplayBaloon: Dispatch<SetStateAction<boolean>>
+  isOpenSearchLocationFromImgModal: boolean
+  allImgList: MarkerImage[]
+  setDisplayMode: Dispatch<SetStateAction<DisplayMode>>
   setFilterTagIds: Dispatch<SetStateAction<number[]>>
   onOpenFilterTagModal: () => void
   toggleFilterTagIds: (id: number) => void
   onCloseFilterTagModal: () => void
+  onClickSearchLocationFromImg: (markerId: number) => void
+  onOpenSearchLocationFromImgModal: () => void
+  onCloseSearchLocationFromImgModal: () => void
 }
 
 export const FilterTag = ({
-  isDisplayBaloon,
+  displayMode,
   tagList,
   isOpenFilterTagModal,
   filterTagIds,
+  isOpenSearchLocationFromImgModal,
+  allImgList,
+  setDisplayMode,
   setFilterTagIds,
-  setIsDisplayBaloon,
   onOpenFilterTagModal,
   toggleFilterTagIds,
   onCloseFilterTagModal,
+  onClickSearchLocationFromImg,
+  onOpenSearchLocationFromImgModal,
+  onCloseSearchLocationFromImgModal,
 }: PropsType) => {
   if (tagList.length === 0) return <></>
   return (
     <>
       <div className="flex justify-between">
-        <Link
-          onClick={() =>
-            setIsDisplayBaloon((prevIsDisplayBaloon) => !prevIsDisplayBaloon)
-          }
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="light">{DISPLAY_MAPPING[displayMode]}</Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Static Actions" variant="light">
+            <DropdownItem key="new" onClick={() => setDisplayMode("img")}>
+              画像表示
+            </DropdownItem>
+            <DropdownItem
+              key="balloon"
+              onClick={() => setDisplayMode("balloon")}
+            >
+              吹き出し表示
+            </DropdownItem>
+            <DropdownItem key="off" onClick={() => setDisplayMode("off")}>
+              OFF
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        <Dropdown
+          showArrow
+          classNames={{
+            base: "before:bg-default-200", // change arrow background
+            content:
+              "py-1 px-1 border border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black",
+          }}
         >
-          {isDisplayBaloon ? "ふきだしOFF" : "ふきだしON"}
-        </Link>
-        <Link onClick={onOpenFilterTagModal}>タグで絞り込み</Link>
+          <DropdownTrigger>
+            <Button variant="light">メニュー</Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            variant="faded"
+            aria-label="Dropdown menu with description"
+          >
+            <DropdownSection title="メニュー">
+              <DropdownItem
+                key="search_location_from_img"
+                description="image list"
+                startContent={
+                  <Image
+                    src="images/image_icon.svg"
+                    alt="画像のアイコン"
+                    width={20}
+                    height={20}
+                  />
+                }
+                onClick={onOpenSearchLocationFromImgModal}
+              >
+                画像一覧
+              </DropdownItem>
+              <DropdownItem
+                key="filter_tag"
+                description="filter tag"
+                startContent={
+                  <Image
+                    src="images/filter_icon.svg"
+                    alt="絞り込みのアイコン"
+                    width={20}
+                    height={20}
+                  />
+                }
+                onClick={onOpenFilterTagModal}
+              >
+                タグで絞り込み
+              </DropdownItem>
+            </DropdownSection>
+          </DropdownMenu>
+        </Dropdown>
       </div>
       <Modal
         placement="center"
@@ -94,6 +178,12 @@ export const FilterTag = ({
           </ModalBody>
         </ModalContent>
       </Modal>
+      <SearchLocationFromImageModal
+        allImgList={allImgList}
+        isOpenModal={isOpenSearchLocationFromImgModal}
+        onCloseModal={onCloseSearchLocationFromImgModal}
+        onClickSearchLocationFromImg={onClickSearchLocationFromImg}
+      />
     </>
   )
 }

@@ -17,6 +17,7 @@ export type Marker = {
   official_description: string | null
   official_web_url: string | null
   official_google_map_url: string | null
+  img?: string
 }
 
 export type NewMarker = {
