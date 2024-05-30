@@ -45,6 +45,7 @@ export const SearchLocationFromImageModal = ({
               <DropdownItem
                 key={i * 2 + 2}
                 onClick={() => setRowCount(i * 2 + 2)}
+                onPress={() => setRowCount(i * 2 + 2)}
               >
                 {i * 2 + 2}
               </DropdownItem>
