@@ -21,6 +21,7 @@ import { MarkerImage } from "@/types/marker_image"
 import { Marker } from "@/types/marker"
 import { CalendarModal } from "./CalendarModal"
 import { SearchLocationModal } from "./SearchLocationModal"
+import { SearchMarkerModal } from "./SearchMarkerModal"
 
 const DISPLAY_MAPPING = {
   img: (
@@ -68,6 +69,12 @@ type PropsType = {
   onCloseSearchLocationModal: () => void
   onSearchLocation: (e: ChangeEvent<HTMLInputElement>) => void
   onClickSearchLocation: (result: google.maps.GeocoderResult) => void
+  isOpenSearchMarkerModal: boolean
+  searchMarkerWord: string
+  searchSuggestMarkerList: Marker[]
+  onSearchMarker: (e: ChangeEvent<HTMLInputElement>) => void
+  onOpenSearchMarkerModal: () => void
+  onCloseSearchMarkerModal: () => void
 }
 
 export const FilterTag = ({
@@ -96,6 +103,12 @@ export const FilterTag = ({
   onCloseSearchLocationModal,
   onSearchLocation,
   onClickSearchLocation,
+  isOpenSearchMarkerModal,
+  searchMarkerWord,
+  searchSuggestMarkerList,
+  onSearchMarker,
+  onOpenSearchMarkerModal,
+  onCloseSearchMarkerModal,
 }: PropsType) => {
   if (tagList.length === 0) return <></>
   return (
@@ -104,7 +117,9 @@ export const FilterTag = ({
         <div className="flex pl-3">
           <Dropdown>
             <DropdownTrigger>
-              <button className="text-[12px]">{DISPLAY_MAPPING[displayMode]}</button>
+              <button className="text-[12px]">
+                {DISPLAY_MAPPING[displayMode]}
+              </button>
             </DropdownTrigger>
             <DropdownMenu aria-label="Static Actions" variant="light">
               <DropdownItem
@@ -220,6 +235,22 @@ export const FilterTag = ({
                 >
                   場所検索
                 </DropdownItem>
+                <DropdownItem
+                  key="filter_tag"
+                  description="filter tag"
+                  startContent={
+                    <Image
+                      src="images/search_icon.svg"
+                      alt="虫眼鏡のアイコン"
+                      width={20}
+                      height={20}
+                    />
+                  }
+                  onClick={onOpenSearchMarkerModal}
+                  onPress={onOpenSearchMarkerModal}
+                >
+                  記録検索
+                </DropdownItem>
               </DropdownSection>
             </DropdownMenu>
           </Dropdown>
@@ -291,6 +322,14 @@ export const FilterTag = ({
         onClickSearchLocation={onClickSearchLocation}
         onCloseModal={onCloseSearchLocationModal}
         onSearchLocation={onSearchLocation}
+      />
+      <SearchMarkerModal
+        isOpenModal={isOpenSearchMarkerModal}
+        searchWord={searchMarkerWord}
+        searchSuggestMarkerList={searchSuggestMarkerList}
+        onCloseModal={onCloseSearchMarkerModal}
+        onSearchMarker={onSearchMarker}
+        onSelectMarker={onClickSearchLocationFromImg}
       />
     </>
   )
