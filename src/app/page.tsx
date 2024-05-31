@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
-      <Header />
+      {/* <Header /> */}
       <MapProvider>
         <NextUIProvider locale="ja">
           <Map />
