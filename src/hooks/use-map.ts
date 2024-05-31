@@ -129,6 +129,9 @@ type ReturnType = {
   removeImage: (url: string) => void
   handleEditMarker: () => void
   onCloseEditMarkerModal: () => void
+  isOpenSearchLocationModal: boolean
+  onOpenSearchLocationModal: () => void
+  onCloseSearchLocationModal: () => void
 }
 
 export const useMap = (): ReturnType => {
@@ -241,6 +244,13 @@ export const useMap = (): ReturnType => {
     onClose: onCloseCalendarModal,
   } = useDisclosure()
 
+  // 場所検索モーダル関連
+  const {
+    isOpen: isOpenSearchLocationModal,
+    onOpen: onOpenSearchLocationModal,
+    onClose: onCloseSearchLocationModal,
+  } = useDisclosure()
+
   // 現在地を取得するイベント
   const onClickCurrentLoaction = () => {
     navigator.geolocation.getCurrentPosition(
@@ -274,6 +284,7 @@ export const useMap = (): ReturnType => {
     setCenterLocation(center)
     setSearchSuggestList([])
     setSearchWord("")
+    onCloseSearchLocationModal()
   }
 
   // 画像をクリックした際に、対応するマーカーを中心に持ってくるイベント
@@ -775,8 +786,11 @@ export const useMap = (): ReturnType => {
 
   // 検索キーワード入力後のGoogle map apiにて候補一覧を取得
   useEffect(() => {
-    if (confirmedSearchWord === "") return
-    const geocoder = new window.google.maps.Geocoder()
+    if (confirmedSearchWord === "") {
+      setSearchSuggestList([])
+      return
+    }
+    const geocoder = new google.maps.Geocoder()
     geocoder.geocode(
       { address: confirmedSearchWord },
       async (results, status) => {
@@ -863,5 +877,8 @@ export const useMap = (): ReturnType => {
     removeImage,
     handleEditMarker,
     onCloseEditMarkerModal,
+    isOpenSearchLocationModal,
+    onOpenSearchLocationModal,
+    onCloseSearchLocationModal,
   }
 }

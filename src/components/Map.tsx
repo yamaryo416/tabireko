@@ -2,7 +2,6 @@
 
 import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api"
 import { useMap } from "@/hooks/use-map"
-import { SearchLocation } from "./SearchLocation"
 import { FilterTag } from "./FilterTag"
 import { MarkerCreateModal } from "./MarkerCreateModal"
 import { TagCreateModal } from "./TagCreateModal"
@@ -87,17 +86,14 @@ export const Map = () => {
     onOpenSearchLocationFromImgModal,
     onCloseSearchLocationFromImgModal,
     onClickSearchLocationFromImg,
+    isOpenSearchLocationModal,
+    onOpenSearchLocationModal,
+    onCloseSearchLocationModal,
   } = useMap()
 
   return (
-    <div className="fixed left-0 top-[57px] w-full">
+    <div className="fixed left-0 top-0 w-full">
       <FlashMessage flash={flash} setFlash={setFlash} />
-      <SearchLocation
-        searchWord={searchWord}
-        searchSuggestList={searchSuggestList}
-        onClickSearchLocation={onClickSearchLocation}
-        onSearchLocation={onSearchLocation}
-      />
       <FilterTag
         displayMode={displayMode}
         tagList={tagList}
@@ -117,6 +113,13 @@ export const Map = () => {
         onClickSearchLocationFromImg={onClickSearchLocationFromImg}
         onOpenSearchLocationFromImgModal={onOpenSearchLocationFromImgModal}
         onCloseSearchLocationFromImgModal={onCloseSearchLocationFromImgModal}
+        searchWord={searchWord}
+        searchSuggestList={searchSuggestList}
+        isOpenSearchLocationModal={isOpenSearchLocationModal}
+        onClickSearchLocation={onClickSearchLocation}
+        onSearchLocation={onSearchLocation}
+        onOpenSearchLocationModal={onOpenSearchLocationModal}
+        onCloseSearchLocationModal={onCloseSearchLocationModal}
       />
       <div className="relative">
         <GoogleMap
@@ -165,7 +168,7 @@ export const Map = () => {
         </GoogleMap>
         <button
           type="button"
-          className="absolute z-10020 bottom-[20px] left-[10px] bg-white p-2.5"
+          className="absolute bottom-[20px] left-[10px] bg-white p-2.5"
           onClick={onClickCurrentLoaction}
         >
           現在地
