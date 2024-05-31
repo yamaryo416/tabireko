@@ -89,6 +89,12 @@ export const Map = () => {
     isOpenSearchLocationModal,
     onOpenSearchLocationModal,
     onCloseSearchLocationModal,
+    isOpenSearchMarkerModal,
+    searchMarkerWord,
+    searchSuggestMarkerList,
+    onSearchMarker,
+    onOpenSearchMarkerModal,
+    onCloseSearchMarkerModal,
   } = useMap()
 
   return (
@@ -120,6 +126,12 @@ export const Map = () => {
         onSearchLocation={onSearchLocation}
         onOpenSearchLocationModal={onOpenSearchLocationModal}
         onCloseSearchLocationModal={onCloseSearchLocationModal}
+        isOpenSearchMarkerModal={isOpenSearchMarkerModal}
+        searchMarkerWord={searchMarkerWord}
+        searchSuggestMarkerList={searchSuggestMarkerList}
+        onSearchMarker={onSearchMarker}
+        onOpenSearchMarkerModal={onOpenSearchMarkerModal}
+        onCloseSearchMarkerModal={onCloseSearchMarkerModal}
       />
       <div className="relative">
         <GoogleMap

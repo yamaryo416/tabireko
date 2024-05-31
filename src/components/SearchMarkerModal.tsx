@@ -8,23 +8,24 @@ import {
   Listbox,
   ListboxItem,
 } from "@nextui-org/react"
+import { Marker } from "@/types/marker"
 
 type PropsType = {
   isOpenModal: boolean
   searchWord: string
-  searchSuggestList: google.maps.GeocoderResult[]
+  searchSuggestMarkerList: Marker[]
   onCloseModal: () => void
-  onSearchLocation: (e: ChangeEvent<HTMLInputElement>) => void
-  onClickSearchLocation: (result: google.maps.GeocoderResult) => void
+  onSearchMarker: (e: ChangeEvent<HTMLInputElement>) => void
+  onSelectMarker: (markerId: number) => void
 }
 
-export const SearchLocationModal = ({
+export const SearchMarkerModal = ({
   isOpenModal,
   searchWord,
-  searchSuggestList,
+  searchSuggestMarkerList,
   onCloseModal,
-  onSearchLocation,
-  onClickSearchLocation,
+  onSearchMarker,
+  onSelectMarker,
 }: PropsType) => {
   return (
     <Modal
@@ -35,18 +36,18 @@ export const SearchLocationModal = ({
       className="mx-10"
     >
       <ModalContent>
-        <ModalHeader>場所検索</ModalHeader>
+        <ModalHeader>記録検索</ModalHeader>
         <ModalBody>
           <div className="mb-3">
-            <Input value={searchWord} onChange={onSearchLocation} />
-            {searchSuggestList.length !== 0 && (
+            <Input value={searchWord} onChange={onSearchMarker} />
+            {searchSuggestMarkerList.length !== 0 && (
               <Listbox className="border-l border-r border-b">
-                {searchSuggestList.map((item) => (
+                {searchSuggestMarkerList.map((marker) => (
                   <ListboxItem
-                    key={item.place_id}
-                    onClick={() => onClickSearchLocation(item)}
+                    key={`suggest-marker-${marker.id}`}
+                    onClick={() => onSelectMarker(marker.id)}
                   >
-                    {item.formatted_address}
+                    {marker.title}
                   </ListboxItem>
                 ))}
               </Listbox>

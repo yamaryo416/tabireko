@@ -132,6 +132,13 @@ type ReturnType = {
   isOpenSearchLocationModal: boolean
   onOpenSearchLocationModal: () => void
   onCloseSearchLocationModal: () => void
+
+  isOpenSearchMarkerModal: boolean
+  searchMarkerWord: string
+  searchSuggestMarkerList: Marker[]
+  onSearchMarker: (e: ChangeEvent<HTMLInputElement>) => void
+  onOpenSearchMarkerModal: () => void
+  onCloseSearchMarkerModal: () => void
 }
 
 export const useMap = (): ReturnType => {
@@ -148,12 +155,18 @@ export const useMap = (): ReturnType => {
   const [flash, setFlash] = useState<Flash | null>(null)
   // 検索キーワード
   const [searchWord, setSearchWord] = useState("")
+  // マーカー検索キーワード
+  const [searchMarkerWord, setSearchMarkerWord] = useState("")
   // 入力が3秒ない場合に、searchWordを代入
   const [confirmedSearchWord] = useDebounce(searchWord, 1000)
 
-  // 検索語の候補一覧
+  // 検索後の候補一覧
   const [searchSuggestList, setSearchSuggestList] = useState<
     google.maps.GeocoderResult[]
+  >([])
+  // マーカー検索後の候補一覧
+  const [searchSuggestMarkerList, setSearchSuggestMarkerList] = useState<
+    Marker[]
   >([])
   // タグ一覧
   const [tagList, setTagList] = useState<Tag[]>([])
@@ -251,6 +264,13 @@ export const useMap = (): ReturnType => {
     onClose: onCloseSearchLocationModal,
   } = useDisclosure()
 
+  // マーカー検索モーダル関連
+  const {
+    isOpen: isOpenSearchMarkerModal,
+    onOpen: onOpenSearchMarkerModal,
+    onClose: onCloseSearchMarkerModal,
+  } = useDisclosure()
+
   // 現在地を取得するイベント
   const onClickCurrentLoaction = () => {
     navigator.geolocation.getCurrentPosition(
@@ -270,6 +290,18 @@ export const useMap = (): ReturnType => {
   // 検索キーワード変更イベント
   const onSearchLocation = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchWord(e.target.value)
+  }
+
+  // マーカー検索キーワード変更イベント
+  const onSearchMarker = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    console.log(markerList)
+    const newSuggestMarkerList = markerList.filter(
+      (marker) =>
+        marker.content?.includes(value) || marker.title?.includes(value),
+    )
+    setSearchSuggestMarkerList(newSuggestMarkerList)
+    setSearchMarkerWord(e.target.value)
   }
 
   // 候補一覧の一つをクリックして、地図の中心を移動するイベント
@@ -299,6 +331,7 @@ export const useMap = (): ReturnType => {
     onOpenDetailMarker(targetMarker)
     onCloseSearchLocationFromImgModal()
     onCloseCalendarModal()
+    onCloseSearchMarkerModal()
   }
 
   // 地図上にてクリックした地点の座標を保存し、マーカー作成モーダルを開くイベント
@@ -880,5 +913,11 @@ export const useMap = (): ReturnType => {
     isOpenSearchLocationModal,
     onOpenSearchLocationModal,
     onCloseSearchLocationModal,
+    isOpenSearchMarkerModal,
+    searchMarkerWord,
+    searchSuggestMarkerList,
+    onSearchMarker,
+    onOpenSearchMarkerModal,
+    onCloseSearchMarkerModal,
   }
 }
