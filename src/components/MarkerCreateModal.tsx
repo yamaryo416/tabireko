@@ -1,6 +1,3 @@
-import { NewMarker } from "@/types/marker"
-import { Tag } from "@/types/tag"
-import { ZonedDateTime } from "@internationalized/date"
 import {
   Modal,
   ModalContent,
@@ -13,50 +10,37 @@ import {
   Link,
   Select,
   SelectItem,
-  Checkbox,
   Spinner,
 } from "@nextui-org/react"
 import Image from "next/image"
-import { ChangeEvent } from "react"
 
-type PropsType = {
-  loading: boolean
-  isOpenCreateMarkerModal: boolean
-  newMarker: NewMarker
-  tagList: Tag[]
-  onOpenCreateTagModal: () => void
-  onCloseCreateMarkerModal: () => void
-  changeNewMarker: (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) => void
-  changeDatetime: (value: ZonedDateTime) => void
-  handleUploadImg: (e: ChangeEvent<HTMLInputElement>, isCreate: boolean) => void
-  handleCreateMarker: () => void
-}
+import { useTagListStore } from "../../store/tag-list"
+import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useNewMarkerStore } from "../../store/new-marker"
+import { useLoadingStore } from "../../store/loading"
+import { MARKER_CRATE, TAG_CREATE } from "@/types/page"
+import { useCreateMarker } from "@/hooks/use-create-marker"
 
-export const MarkerCreateModal = ({
-  loading,
-  isOpenCreateMarkerModal,
-  newMarker,
-  tagList,
-  onOpenCreateTagModal,
-  onCloseCreateMarkerModal,
-  changeNewMarker,
-  changeDatetime,
-  handleUploadImg,
-  handleCreateMarker,
-}: PropsType) => {
+export const MarkerCreateModal = () => {
+  const { modalOpenList, toggleModalOpenList } = useModalOpenListStore()
+  const { loading } = useLoadingStore()
+  const { tagList } = useTagListStore()
+  const { newMarker } = useNewMarkerStore()
+
+  const { changeNewMarker, changeDatetime, handleUploadImg, onCreate } =
+    useCreateMarker()
+
   return (
     <Modal
       placement="center"
-      isOpen={isOpenCreateMarkerModal}
-      onClose={onCloseCreateMarkerModal}
+      isOpen={modalOpenList.includes(MARKER_CRATE)}
+      onClose={() => toggleModalOpenList(MARKER_CRATE)}
       isDismissable={false}
       className="mx-10"
     >
       <ModalContent>
         <ModalHeader>旅の記録</ModalHeader>
-        <ModalBody className="overflow-scroll max-h-[60vh]">
+        <ModalBody className="max-h-[60vh] overflow-scroll">
           <form className="flex flex-col gap-2">
             <Select
               name="tagId"
@@ -71,7 +55,9 @@ export const MarkerCreateModal = ({
                 </SelectItem>
               ))}
             </Select>
-            <Link onClick={onOpenCreateTagModal}>タグを作成する</Link>
+            <Link onClick={() => toggleModalOpenList(TAG_CREATE)}>
+              タグを作成する
+            </Link>
             <Input
               label="タイトル"
               labelPlacement="outside"
@@ -109,10 +95,10 @@ export const MarkerCreateModal = ({
                 />
               </div>
             ))}
-            <div className="flex items-center justify-center w-full">
+            <div className="flex w-full items-center justify-center">
               <label
                 htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-10 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                className="dark:hover:bg-bray-800 flex h-10 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
               >
                 <div className="flex flex-col items-center justify-center">
                   <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -124,14 +110,14 @@ export const MarkerCreateModal = ({
                   type="file"
                   className="hidden"
                   disabled={loading}
-                  onChange={(e) => handleUploadImg(e, true)}
+                  onChange={handleUploadImg}
                 />
               </label>
             </div>
             <Button
               type="submit"
               color="primary"
-              formAction={handleCreateMarker}
+              formAction={onCreate}
               disabled={loading}
             >
               {loading ? <Spinner color="default" /> : "記録する"}
@@ -140,7 +126,7 @@ export const MarkerCreateModal = ({
               type="button"
               color="default"
               variant="light"
-              onPress={onCloseCreateMarkerModal}
+              onPress={() => toggleModalOpenList(MARKER_CRATE)}
             >
               閉じる
             </Button>

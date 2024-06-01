@@ -1,24 +1,20 @@
 "use client"
 
-import { Dispatch, SetStateAction, useEffect } from "react"
+import { useEffect } from "react"
 
-import { Flash } from "@/types/flash"
+import { useFlashStore } from "../../store/flash"
 
 export const FLASH_COLOR_MAPPING: { [key: string]: string } = {
   success: "#f39f5a",
   failed: "#ff5555",
 }
 
-type PropsType = {
-  flash: Flash | null
-  setFlash: Dispatch<SetStateAction<Flash | null>>
-}
-
-export const FlashMessage = ({ flash, setFlash }: PropsType) => {
+export const FlashMessage = () => {
+  const { flash, reset } = useFlashStore()
   useEffect(() => {
     if (flash) {
       setTimeout(() => {
-        setFlash(null)
+        reset()
       }, 4000)
     }
   }, [flash])
@@ -28,7 +24,7 @@ export const FlashMessage = ({ flash, setFlash }: PropsType) => {
   return (
     <div
       data-testid="flashMessage"
-      className="fixed bottom-10 right-0 p-5 text-center transition-[right] duration-500 ease-in text-white rounded-l-md z-[100000] whitespace-pre-wrap"
+      className="fixed bottom-10 right-0 z-[100000] whitespace-pre-wrap rounded-l-md p-5 text-center text-white transition-[right] duration-500 ease-in"
       style={{
         backgroundColor: FLASH_COLOR_MAPPING[flash.kind],
       }}

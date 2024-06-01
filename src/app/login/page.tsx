@@ -40,7 +40,7 @@ const LoginPage = () => {
   }, [error])
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex h-screen flex-col items-center justify-center">
       <form className="flex flex-col items-center justify-center">
         <Image
           alt="ロゴ"
@@ -50,7 +50,7 @@ const LoginPage = () => {
           className="mb-7"
         />
         {error !== "" && (
-          <div className="p-5 bg-red-400 text-white rounded-lg mb-3">
+          <div className="mb-3 rounded-lg bg-red-400 p-5 text-white">
             {error}
           </div>
         )}

@@ -1,4 +1,3 @@
-import { Icon } from "@/types/icon"
 import {
   Modal,
   ModalContent,
@@ -9,30 +8,23 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react"
-import { ChangeEvent } from "react"
 
-type PropsType = {
-  newTag: { name: string; icon_id: number }
-  isOpenCreateTagModal: boolean
-  iconList: Icon[]
-  onCloseCreateTagModal: () => void
-  handleCreateTag: () => void
-  changeNewTag: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
-}
+import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useIconListStore } from "../../store/icon-list"
+import { TAG_CREATE } from "@/types/page"
+import { useCreateTag } from "@/hooks/use-create-tag"
 
-export const TagCreateModal = ({
-  newTag,
-  isOpenCreateTagModal,
-  iconList,
-  onCloseCreateTagModal,
-  handleCreateTag,
-  changeNewTag,
-}: PropsType) => {
+export const TagCreateModal = () => {
+  const { modalOpenList, toggleModalOpenList } = useModalOpenListStore()
+  const { iconList } = useIconListStore()
+
+  const { newTag, changeNewTag, handleCreateTag } = useCreateTag()
+
   return (
     <Modal
       placement="center"
-      isOpen={isOpenCreateTagModal}
-      onClose={onCloseCreateTagModal}
+      isOpen={modalOpenList.includes(TAG_CREATE)}
+      onClose={() => toggleModalOpenList(TAG_CREATE)}
       isDismissable={false}
       className="mx-10"
     >
@@ -68,7 +60,7 @@ export const TagCreateModal = ({
               type="button"
               color="danger"
               variant="light"
-              onPress={onCloseCreateTagModal}
+              onPress={() => toggleModalOpenList(TAG_CREATE)}
             >
               閉じる
             </Button>
