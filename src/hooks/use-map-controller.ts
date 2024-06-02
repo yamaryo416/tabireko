@@ -128,6 +128,7 @@ export const useMapController = (): ReturnType => {
           zoom: 15,
           center: initPos,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
+          gestureHandling: "none",
         }
         const mapEl = document.getElementById("map_canvas") as HTMLDivElement
         const myMap = new google.maps.Map(mapEl, myOptions)

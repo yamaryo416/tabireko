@@ -20,21 +20,28 @@ import { useNewMarkerStore } from "../../store/new-marker"
 import { useLoadingStore } from "../../store/loading"
 import { MARKER_CREATE, TAG_CREATE } from "@/types/page"
 import { useCreateMarker } from "@/hooks/use-create-marker"
+import { useSelectedPlaceIdStore } from "../../store/selected-place-id"
 
 export const MarkerCreateModal = () => {
   const { modalOpenList, toggleModalOpenList } = useModalOpenListStore()
   const { loading } = useLoadingStore()
   const { tagList } = useTagListStore()
   const { newMarker } = useNewMarkerStore()
+  const { setSelectedPlaceId } = useSelectedPlaceIdStore()
 
   const { changeNewMarker, changeDatetime, handleUploadImg, onCreate } =
     useCreateMarker()
+
+  const onClose = () => {
+    toggleModalOpenList(MARKER_CREATE)
+    setSelectedPlaceId(null)
+  }
 
   return (
     <Modal
       placement="center"
       isOpen={modalOpenList.includes(MARKER_CREATE)}
-      onClose={() => toggleModalOpenList(MARKER_CREATE)}
+      onClose={onClose}
       isDismissable={false}
       className="mx-10"
     >
@@ -126,7 +133,7 @@ export const MarkerCreateModal = () => {
               type="button"
               color="default"
               variant="light"
-              onPress={() => toggleModalOpenList(MARKER_CREATE)}
+              onPress={onClose}
             >
               閉じる
             </Button>
