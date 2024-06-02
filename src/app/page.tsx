@@ -17,6 +17,7 @@ import { FilterTagModal } from "@/components/FilterTagModal"
 import { AllImgModal } from "@/components/AllImgModal"
 import { useFetch } from "@/hooks/use-fetch"
 import { MarkerDeleteModal } from "@/components/MarkerDeleteModal"
+import { ConfirmInstanceMarkerCreateModal } from "@/components/ConfirmInstanceMarkerCreateModal"
 
 export default function Home() {
   useFetch()
@@ -51,6 +52,8 @@ export default function Home() {
             <SearchLocationModal />
             {/* マーカー検索モーダル */}
             <SearchMarkerModal />
+            {/* 現在地から記録を即作成する確認モーダル */}
+            <ConfirmInstanceMarkerCreateModal />
           </div>
         </NextUIProvider>
       </MapProvider>
