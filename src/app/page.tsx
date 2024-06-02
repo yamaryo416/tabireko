@@ -54,6 +54,7 @@ export default function Home() {
             <SearchMarkerModal />
             {/* 現在地から記録を即作成する確認モーダル */}
             <ConfirmInstanceMarkerCreateModal />
+            <div id="map_canvas" />
           </div>
         </NextUIProvider>
       </MapProvider>
