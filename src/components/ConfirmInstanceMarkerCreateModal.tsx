@@ -20,12 +20,16 @@ export const ConfirmInstanceMarkerCreateModal = () => {
   const { officialInfoList } = useOfficialInfoListStore()
   const { selectedPlaceId, setSelectedPlaceId } = useSelectedPlaceIdStore()
   const { onCreate } = useCreateMarker()
+  const onClose = () => {
+    toggleModalOpenList(INSTANCE_MARKER_CREATE)
+    setSelectedPlaceId(null)
+  }
 
   return (
     <Modal
       placement="center"
       isOpen={modalOpenList.includes(INSTANCE_MARKER_CREATE)}
-      onClose={() => toggleModalOpenList(INSTANCE_MARKER_CREATE)}
+      onClose={onClose}
       isDismissable={false}
       className="mx-10"
     >
@@ -64,7 +68,7 @@ export const ConfirmInstanceMarkerCreateModal = () => {
           </Button>
           <Button
             type="button"
-            onClick={() => toggleModalOpenList(INSTANCE_MARKER_CREATE)}
+            onClick={onClose}
             color="default"
             variant="light"
             disabled={loading}
