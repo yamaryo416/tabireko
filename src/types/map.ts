@@ -25,5 +25,5 @@ export type OfficialInfo = {
   description: string
   webUrl: string
   googleMapUrl: string
-  photos: string[]
+  photos: { name: string }[]
 }

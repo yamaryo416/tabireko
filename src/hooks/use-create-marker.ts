@@ -11,12 +11,9 @@ import type { RequestCreateMarker } from "@/types/marker"
 import { createMarker } from "@/utils/api/marker"
 import { createMarkerImage } from "@/utils/api/marker_image"
 import { createMarkerOfficialImage } from "@/utils/api/marker_official_image"
-import { MARKER_CREATE } from "@/types/page"
-import {
-  INIT_OFFICIAL_INFO,
-  useOfficialInfoStore,
-} from "../../store/official-info"
 import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useSelectedPlaceIdStore } from "../../store/selected-place-id"
+import { OfficialInfo } from "@/types/map"
 
 type ReturnType = {
   changeNewMarker: (
@@ -32,8 +29,9 @@ export const useCreateMarker = (): ReturnType => {
   const { setLoading } = useLoadingStore()
   const { newMarker, setNewMarker } = useNewMarkerStore()
   const { markerList, setMarkerList } = useMarkerListStore()
-  const { officialInfo, setOfficialInfo } = useOfficialInfoStore()
-  const { toggleModalOpenList } = useModalOpenListStore()
+  const { setModalOpenList } = useModalOpenListStore()
+  const { selectedPlaceId, setSelectedPlaceId } = useSelectedPlaceIdStore()
+
   // マーカー作成 各カラム編集用イベント
   const changeNewMarker = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -82,12 +80,19 @@ export const useCreateMarker = (): ReturnType => {
     }
     try {
       // マーカーの作成
-      const resMarkerList = await handleCreateMarker(userId)
+      let officialInfo: OfficialInfo | null = null
+      if (selectedPlaceId != null) {
+        officialInfo = await getOfficialInfo()
+      }
+      const resMarkerList = await handleCreateMarker(userId, officialInfo)
       const markerId = resMarkerList[0].id
       // マーカーに紐づく画像の作成
       await handleCreateMarkerImg(markerId, userId)
-      // マーカーに紐づく公式画像の作成
-      await handleCreateMarkerOfficialImg(markerId)
+
+      if (officialInfo != null) {
+        // マーカーに紐づく公式画像の作成
+        await handleCreateMarkerOfficialImg(markerId, officialInfo)
+      }
 
       const parseDateMarkerList = resMarkerList.map((item) => ({
         ...item,
@@ -96,10 +101,10 @@ export const useCreateMarker = (): ReturnType => {
 
       setMarkerList([...markerList, parseDateMarkerList[0]])
       setFlash({ kind: "success", message: "記録の作成に成功しました" })
-      setOfficialInfo(INIT_OFFICIAL_INFO)
       setNewMarker(INIT_NEW_MARKER)
       setLoading(false)
-      toggleModalOpenList(MARKER_CREATE)
+      setModalOpenList([])
+      setSelectedPlaceId(null)
     } catch (e) {
       console.error(e)
       setFlash({ kind: "failed", message: "記録の作成に失敗しました" })
@@ -107,8 +112,32 @@ export const useCreateMarker = (): ReturnType => {
     }
   }
 
+  // 公式のマーカーをクリックして、
+  const getOfficialInfo = async (): Promise<OfficialInfo> => {
+    return await fetch(
+      `https://places.googleapis.com/v1/places/${selectedPlaceId}?fields=*&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`,
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        return {
+          title: (res.displayName != null
+            ? res.displayName.text
+            : "") as string,
+          description: (res.editorialSummary != null
+            ? res.editorialSummary.text
+            : "") as string,
+          webUrl: (res.websiteUri || "") as string,
+          googleMapUrl: (res.googleMapsUri || "") as string,
+          photos: res.photos != null ? (res.photos as { name: string }[]) : [],
+        }
+      })
+  }
+
   // マーカーを作成するハンドラー
-  const handleCreateMarker = async (userId: string) => {
+  const handleCreateMarker = async (
+    userId: string,
+    officialInfo: OfficialInfo | null,
+  ) => {
     const { title, content, lat, lng, visited_datetime, tagId } = newMarker
     const date = new Date(
       visited_datetime.year,
@@ -123,10 +152,19 @@ export const useCreateMarker = (): ReturnType => {
       visited_datetime: date,
       lat,
       lng,
-      official_title: officialInfo.title,
-      official_description: officialInfo.description,
-      official_web_url: officialInfo.webUrl,
-      official_google_map_url: officialInfo.googleMapUrl,
+      official_title: "",
+      official_description: "",
+      official_web_url: "",
+      official_google_map_url: "",
+    }
+    if (officialInfo != null) {
+      requestdata = {
+        ...requestdata,
+        official_title: officialInfo.title,
+        official_description: officialInfo.description,
+        official_web_url: officialInfo.webUrl,
+        official_google_map_url: officialInfo.googleMapUrl,
+      }
     }
     if (tagId !== 0) {
       requestdata = { ...requestdata, tag_id: tagId }
@@ -154,19 +192,21 @@ export const useCreateMarker = (): ReturnType => {
   }
 
   // マーカーに紐づく公式画像を作成するハンドラー
-  const handleCreateMarkerOfficialImg = async (markerId: number) => {
-    const officialImgData = officialInfo.photos.map((photo) => {
-      return {
-        marker_id: markerId,
-        url: photo,
-      }
+  const handleCreateMarkerOfficialImg = async (
+    markerId: number,
+    officialInfo: OfficialInfo,
+  ) => {
+    officialInfo.photos.forEach((photo) => {
+      fetch(
+        `https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}&maxWidthPx=400`,
+      ).then((resPhoto) => {
+        const requestData = {
+          marker_id: markerId,
+          url: resPhoto.url,
+        }
+        createMarkerOfficialImage([requestData])
+      })
     })
-    if (officialImgData.length !== 0) {
-      const { error } = await createMarkerOfficialImage(officialImgData)
-      if (error != null) {
-        throw new Error("cannot create marker official img")
-      }
-    }
   }
 
   return {

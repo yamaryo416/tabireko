@@ -33,11 +33,13 @@ export const CustomMap = () => {
     openCreateMarkerModal,
     onOpenDetailMarker,
     markerFilter,
+    onOpenInstantCreateModal,
   } = useMapController()
 
   return (
     <div className="relative">
       <GoogleMap
+        id="map_canvas"
         mapContainerStyle={defaultMapContainerStyle}
         center={mapOption.center}
         zoom={mapOption.zoom}
@@ -87,13 +89,22 @@ export const CustomMap = () => {
           </>
         ))}
       </GoogleMap>
-      <button
-        type="button"
-        className="absolute bottom-[20px] left-[10px] bg-white p-2.5"
-        onClick={onClickCurrentLoaction}
-      >
-        現在地
-      </button>
+      <div className="absolute bottom-[20px] left-[10px] flex flex-col gap-2">
+        <button
+          type="button"
+          className="bg-amber-700 p-2.5 text-white"
+          onClick={onOpenInstantCreateModal}
+        >
+          現在地から即作成
+        </button>
+        <button
+          type="button"
+          className="bg-white p-2.5"
+          onClick={onClickCurrentLoaction}
+        >
+          現在地
+        </button>
+      </div>
     </div>
   )
 }

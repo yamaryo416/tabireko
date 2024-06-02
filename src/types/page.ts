@@ -8,6 +8,7 @@ export const TAG_FILTER = "tag-filter"
 export const IMG_LIST = "img-list"
 export const SEARCH_LOCATION = "search-location"
 export const SEARCH_MARKER = "search-marker"
+export const INSTANCE_MARKER_CREATE = "instance-marker-create"
 
 export const MENU_LIST = [
   {
