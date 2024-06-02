@@ -39,7 +39,6 @@ export const CustomMap = () => {
   return (
     <div className="relative">
       <GoogleMap
-        id="map_canvas"
         mapContainerStyle={defaultMapContainerStyle}
         center={mapOption.center}
         zoom={mapOption.zoom}
