@@ -1,21 +1,41 @@
 import { Modal, ModalContent, ModalBody, Button } from "@nextui-org/react"
 
-type PropsType = {
-  isOpen: boolean
-  handleDelete: () => void
-  onClose: () => void
-}
+import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useSelectedMarkerStore } from "../../store/selected-marker"
+import { useFlashStore } from "../../store/flash"
+import { useMarkerListStore } from "../../store/marker-list"
+import { deleteMarker } from "@/utils/api/marker"
+import { MARKER_DELETE } from "@/types/page"
 
-export const MarkerDeleteModal = ({
-  isOpen,
-  handleDelete,
-  onClose,
-}: PropsType) => {
+export const MarkerDeleteModal = () => {
+  const { modalOpenList, toggleModalOpenList, setModalOpenList } =
+    useModalOpenListStore()
+  const { setFlash } = useFlashStore()
+  const { markerList, setMarkerList } = useMarkerListStore()
+  const { selectedMarker, setSelectedMarker } = useSelectedMarkerStore()
+
+  const handleDelete = async () => {
+    if (!selectedMarker) return
+    const id = selectedMarker.id
+    const { error } = await deleteMarker(id)
+    if (error != null) {
+      setFlash({ kind: "failed", message: "記録の削除に失敗しました" })
+      return
+    }
+    setFlash({ kind: "success", message: "記録を削除しました。" })
+    setSelectedMarker(null)
+    setMarkerList([...markerList].filter((marker) => marker.id !== id))
+    setModalOpenList([])
+  }
   return (
-    <Modal placement="center" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      placement="center"
+      isOpen={modalOpenList.includes(MARKER_DELETE)}
+      onClose={() => toggleModalOpenList(MARKER_DELETE)}
+    >
       <ModalContent>
         <ModalBody>
-          <p className="text-large p-10">記録を削除します。よろしいですか？</p>
+          <p className="p-10 text-large">記録を削除します。よろしいですか？</p>
           <Button
             type="button"
             onClick={handleDelete}
@@ -26,7 +46,7 @@ export const MarkerDeleteModal = ({
           </Button>
           <Button
             type="button"
-            onClick={onClose}
+            onClick={() => toggleModalOpenList(MARKER_DELETE)}
             color="default"
             variant="light"
           >

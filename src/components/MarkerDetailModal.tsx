@@ -1,78 +1,66 @@
-import { Flash } from "@/types/flash"
-import { Marker } from "@/types/marker"
-import { MarkerImage } from "@/types/marker_image"
-import { deleteMarker } from "@/utils/api/marker"
-import {
-  Modal,
-  ModalContent,
-  ModalBody,
-  useDisclosure,
-  Button,
-} from "@nextui-org/react"
+import { Modal, ModalContent, ModalBody, Button } from "@nextui-org/react"
 import Image from "next/image"
-import { Dispatch, SetStateAction, useState } from "react"
-import { MarkerDeleteModal } from "./MarkerDeleteModal"
-import { MarkerOfficialImage } from "@/types/marker_official_image"
-import { toCalendarDateTime } from "@internationalized/date"
+import { useState } from "react"
+
 import { formatDatetime } from "@/utils/datetime"
+import { useSelectedMarkerStore } from "../../store/selected-marker"
+import { useSelectedMarkerImgsStore } from "../../store/selected-marker-imgs"
+import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useSelectedMarkerStoreOfficialImgsStore } from "../../store/selected-marker-official-imgs"
+import { MARKER_DELETE, MARKER_DETAIL, MARKER_EDIT } from "@/types/page"
+import { useEditMarkerStore } from "../../store/edit-marker"
 
-type PropsType = {
-  selectedMarker: Marker | null
-  selectedMarkerImgs: MarkerImage[]
-  selectedMarkerOfficialImgs: MarkerOfficialImage[]
-  isOpenDetailModal: boolean
-  setSelectedMarker: Dispatch<SetStateAction<Marker | null>>
-  setMarkerList: Dispatch<SetStateAction<Marker[]>>
-  setFlash: Dispatch<SetStateAction<Flash | null>>
-  onCloseDetailModal: () => void
-  onOpenEditMarker: () => void
-}
-
-export const MarkerDetailModal = ({
-  selectedMarker,
-  selectedMarkerImgs,
-  selectedMarkerOfficialImgs,
-  isOpenDetailModal,
-  setSelectedMarker,
-  setMarkerList,
-  setFlash,
-  onCloseDetailModal,
-  onOpenEditMarker,
-}: PropsType) => {
+export const MarkerDetailModal = () => {
+  const { selectedMarkerImgs } = useSelectedMarkerImgsStore()
+  const { selectedMarkerOfficialImgs } =
+    useSelectedMarkerStoreOfficialImgsStore()
+  const { selectedMarker } = useSelectedMarkerStore()
   const [isOfficialOpen, setIsOfficialOpen] = useState(false)
-  // マーカー削除用モーダル関連
-  const {
-    isOpen: isOpenDeleteMarkerModal,
-    onOpen: onOpenDeleteMarkerModal,
-    onClose: onCloseDeleteMarkerModal,
-  } = useDisclosure()
+  const { modalOpenList, toggleModalOpenList } = useModalOpenListStore()
+  const { setEditMarker } = useEditMarkerStore()
 
-  const handleDelete = async () => {
-    if (!selectedMarker) return
-    const id = selectedMarker.id
-    const { error } = await deleteMarker(id)
-    if (!!error) {
-      setFlash({ kind: "failed", message: "記録の削除に失敗しました" })
-      return
-    }
-    setFlash({ kind: "success", message: "記録を削除しました。" })
-    setSelectedMarker(null)
-    setMarkerList((prevMarkerList) => [
-      ...prevMarkerList.filter((marker) => marker.id !== id),
-    ])
-    onCloseDeleteMarkerModal()
-    onCloseDetailModal()
+  // マーカー詳細からマーカー編集モーダルを開くイベント
+  const onOpenEditMarker = () => {
+    if (selectedMarker == null) return
+    const {
+      id,
+      visited_datetime,
+      lat,
+      lng,
+      content,
+      tag,
+      title,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
+    } = selectedMarker
+    setEditMarker({
+      id,
+      title,
+      content: content ?? "",
+      lat,
+      lng,
+      visited_datetime,
+      tagId: tag?.id ?? 0,
+      images: selectedMarkerImgs,
+      official_title: official_title || "",
+      official_description: official_description || "",
+      official_web_url: official_web_url || "",
+      official_google_map_url: official_google_map_url || "",
+    })
+    toggleModalOpenList(MARKER_EDIT)
   }
 
   return (
     <Modal
       placement="center"
-      isOpen={isOpenDetailModal}
-      onClose={onCloseDetailModal}
+      isOpen={modalOpenList.includes(MARKER_DETAIL)}
+      onClose={() => toggleModalOpenList(MARKER_DETAIL)}
       className="mx-10"
     >
       <ModalContent>
-        <ModalBody className="overflow-scroll max-h-[60vh]">
+        <ModalBody className="max-h-[60vh] overflow-scroll">
           {!!selectedMarker?.official_google_map_url &&
             selectedMarker.official_google_map_url != "" && (
               <a
@@ -89,7 +77,7 @@ export const MarkerDetailModal = ({
               ? formatDatetime(selectedMarker.visited_datetime)
               : ""}
           </small>
-          <h4 className="font-bold text-large">
+          <h4 className="text-large font-bold">
             {selectedMarker?.title || ""}
           </h4>
           <p className="whitespace-pre-wrap">{selectedMarker?.content || ""}</p>
@@ -103,7 +91,7 @@ export const MarkerDetailModal = ({
                     </small>
                     {!!selectedMarker?.official_description &&
                       selectedMarker.official_description !== "" && (
-                        <small className="text-default-500 whitespace-pre-wrap">
+                        <small className="whitespace-pre-wrap text-default-500">
                           {selectedMarker.official_description}
                         </small>
                       )}
@@ -155,15 +143,13 @@ export const MarkerDetailModal = ({
             <Button color="success" onClick={onOpenEditMarker}>
               編集
             </Button>
-            <Button color="danger" onClick={onOpenDeleteMarkerModal}>
+            <Button
+              color="danger"
+              onClick={() => toggleModalOpenList(MARKER_DELETE)}
+            >
               削除
             </Button>
           </div>
-          <MarkerDeleteModal
-            isOpen={isOpenDeleteMarkerModal}
-            handleDelete={handleDelete}
-            onClose={onCloseDeleteMarkerModal}
-          />
         </ModalBody>
       </ModalContent>
     </Modal>

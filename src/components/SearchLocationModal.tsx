@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react"
+import { ChangeEvent, useEffect } from "react"
 import {
   Modal,
   ModalContent,
@@ -8,29 +8,52 @@ import {
   Listbox,
   ListboxItem,
 } from "@nextui-org/react"
+import { useSearchLocationStore } from "../../store/search-location"
+import { useDebounce } from "use-debounce"
+import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useSearch } from "@/hooks/use-search"
+import { SEARCH_LOCATION } from "@/types/page"
 
-type PropsType = {
-  isOpenModal: boolean
-  searchWord: string
-  searchSuggestList: google.maps.GeocoderResult[]
-  onCloseModal: () => void
-  onSearchLocation: (e: ChangeEvent<HTMLInputElement>) => void
-  onClickSearchLocation: (result: google.maps.GeocoderResult) => void
-}
+export const SearchLocationModal = () => {
+  const { modalOpenList, toggleModalOpenList } = useModalOpenListStore()
+  const { searchLocation, setSearchLocation, reset } = useSearchLocationStore()
+  const { onClickSearchLocation } = useSearch()
 
-export const SearchLocationModal = ({
-  isOpenModal,
-  searchWord,
-  searchSuggestList,
-  onCloseModal,
-  onSearchLocation,
-  onClickSearchLocation,
-}: PropsType) => {
+  const changeSearchLocationKeyword = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchLocation({
+      keyword: e.target.value,
+      suggestionList: searchLocation.suggestionList,
+    })
+  }
+
+  // 入力が3秒ない場合に、キーワードを代入
+  const [confirmedSearchWord] = useDebounce(searchLocation.keyword, 1000)
+
+  // 検索キーワード入力後のGoogle map apiにて候補一覧を取得
+  useEffect(() => {
+    if (confirmedSearchWord === "") {
+      reset()
+      return
+    }
+    const geocoder = new google.maps.Geocoder()
+    geocoder.geocode(
+      { address: confirmedSearchWord },
+      async (results, status) => {
+        if (status === "OK" && results) {
+          setSearchLocation({
+            keyword: searchLocation.keyword,
+            suggestionList: results,
+          })
+        }
+      },
+    )
+  }, [confirmedSearchWord])
+
   return (
     <Modal
       placement="center"
-      isOpen={isOpenModal}
-      onClose={onCloseModal}
+      isOpen={modalOpenList.includes(SEARCH_LOCATION)}
+      onClose={() => toggleModalOpenList(SEARCH_LOCATION)}
       isDismissable={false}
       className="mx-10"
     >
@@ -38,10 +61,14 @@ export const SearchLocationModal = ({
         <ModalHeader>場所検索</ModalHeader>
         <ModalBody>
           <div className="mb-3">
-            <Input value={searchWord} onChange={onSearchLocation} />
-            {searchSuggestList.length !== 0 && (
-              <Listbox className="border-l border-r border-b">
-                {searchSuggestList.map((item) => (
+            <Input
+              value={searchLocation.keyword}
+              onChange={changeSearchLocationKeyword}
+              placeholder="日本橋"
+            />
+            {searchLocation.suggestionList.length !== 0 && (
+              <Listbox className="border-b border-l border-r">
+                {searchLocation.suggestionList.map((item) => (
                   <ListboxItem
                     key={item.place_id}
                     onClick={() => onClickSearchLocation(item)}

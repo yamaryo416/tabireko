@@ -1,6 +1,3 @@
-import { EditMarker, NewMarker } from "@/types/marker"
-import { Tag } from "@/types/tag"
-import { ZonedDateTime } from "@internationalized/date"
 import {
   Modal,
   ModalContent,
@@ -16,50 +13,40 @@ import {
   Spinner,
 } from "@nextui-org/react"
 import Image from "next/image"
-import { ChangeEvent } from "react"
 
-type PropsType = {
-  loading: boolean
-  isOpen: boolean
-  editMarker: EditMarker | null
-  tagList: Tag[]
-  onOpenCreateTagModal: () => void
-  onClose: () => void
-  changeEditMarker: (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) => void
-  changeDatetime: (value: ZonedDateTime) => void
-  removeImage: (url: string) => void
-  handleUploadImg: (e: ChangeEvent<HTMLInputElement>, isCreate: boolean) => void
-  handleEdit: () => void
-}
+import { useTagListStore } from "../../store/tag-list"
+import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useEditMarkerStore } from "../../store/edit-marker"
+import { useLoadingStore } from "../../store/loading"
+import { MARKER_EDIT, TAG_CREATE } from "@/types/page"
+import { useEditMarker } from "@/hooks/use-edit-marker"
 
-export const MarkerEditModal = ({
-  loading,
-  isOpen,
-  editMarker,
-  tagList,
-  onOpenCreateTagModal,
-  onClose,
-  changeEditMarker,
-  changeDatetime,
-  removeImage,
-  handleUploadImg,
-  handleEdit,
-}: PropsType) => {
-  if (!editMarker) return <></>
+export const MarkerEditModal = () => {
+  const { tagList } = useTagListStore()
+  const { modalOpenList, toggleModalOpenList } = useModalOpenListStore()
+  const { editMarker } = useEditMarkerStore()
+  const { loading } = useLoadingStore()
+  const {
+    changeEditMarker,
+    changeEditDatetime,
+    removeImage,
+    handleUploadImg,
+    onEdit,
+  } = useEditMarker()
+
+  if (editMarker == null) return <></>
 
   return (
     <Modal
       placement="center"
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={modalOpenList.includes(MARKER_EDIT)}
+      onClose={() => toggleModalOpenList(MARKER_EDIT)}
       isDismissable={false}
       className="mx-10"
     >
       <ModalContent>
         <ModalHeader>記録を編集</ModalHeader>
-        <ModalBody className="overflow-scroll max-h-[60vh]">
+        <ModalBody className="max-h-[60vh] overflow-scroll">
           <form className="flex flex-col gap-2">
             <Select
               name="tagId"
@@ -75,7 +62,9 @@ export const MarkerEditModal = ({
                 </SelectItem>
               ))}
             </Select>
-            <Link onClick={onOpenCreateTagModal}>タグを作成する</Link>
+            <Link onClick={() => toggleModalOpenList(TAG_CREATE)}>
+              タグを作成する
+            </Link>
             <Input
               label="タイトル"
               labelPlacement="outside"
@@ -91,7 +80,7 @@ export const MarkerEditModal = ({
               label="日時"
               labelPlacement="outside"
               value={editMarker.visited_datetime}
-              onChange={changeDatetime}
+              onChange={changeEditDatetime}
             />
             <Textarea
               name="content"
@@ -105,7 +94,7 @@ export const MarkerEditModal = ({
             {editMarker.images.map((img) => (
               <div key={img.url} className="relative">
                 <button
-                  className="absolute bg-gray-500 text-center w-[20px] leading-[20px] rounded-full right-0 top-[-5px] text-white"
+                  className="absolute right-0 top-[-5px] w-[20px] rounded-full bg-gray-500 text-center leading-[20px] text-white"
                   onClick={() => removeImage(img.url)}
                 >
                   X
@@ -119,10 +108,10 @@ export const MarkerEditModal = ({
                 />
               </div>
             ))}
-            <div className="flex items-center justify-center w-full">
+            <div className="flex w-full items-center justify-center">
               <label
                 htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-10 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                className="dark:hover:bg-bray-800 flex h-10 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
               >
                 <div className="flex flex-col items-center justify-center">
                   <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -134,14 +123,14 @@ export const MarkerEditModal = ({
                   type="file"
                   className="hidden"
                   disabled={loading}
-                  onChange={(e) => handleUploadImg(e, false)}
+                  onChange={handleUploadImg}
                 />
               </label>
             </div>
             <Button
               type="submit"
               color="primary"
-              formAction={handleEdit}
+              formAction={onEdit}
               disabled={loading}
             >
               {loading ? <Spinner color="default" /> : "編集する"}
@@ -150,7 +139,7 @@ export const MarkerEditModal = ({
               type="button"
               color="default"
               variant="light"
-              onPress={onClose}
+              onPress={() => toggleModalOpenList(MARKER_EDIT)}
             >
               閉じる
             </Button>
