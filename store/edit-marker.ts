@@ -1,4 +1,4 @@
-import { EditMarker } from "@/types/marker"
+import type { EditMarker } from "@/types/marker"
 import { create } from "zustand"
 
 // マーカー編集用

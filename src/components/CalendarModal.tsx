@@ -111,6 +111,7 @@ export const CalendarModal = () => {
             </Dropdown>
             <div className="flex gap-1">
               <button
+                type="button"
                 onClick={() =>
                   setCurrentDate((prevCurrentDate) =>
                     prevCurrentDate.subtract(
@@ -127,12 +128,14 @@ export const CalendarModal = () => {
                 />
               </button>
               <button
+                type="button"
                 className="text-[12px]"
                 onClick={() => setCurrentDate(startOfWeek(today, "en-US"))}
               >
                 今日
               </button>
               <button
+                type="button"
                 onClick={() =>
                   setCurrentDate((prevCurrentDate) =>
                     prevCurrentDate.add(

@@ -1,4 +1,4 @@
-import { DisplayMapMode } from "@/types/map"
+import type { DisplayMapMode } from "@/types/map"
 import { create } from "zustand"
 
 // google mapに画像or吹き出しor何も表示しないを制御する

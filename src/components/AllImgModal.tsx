@@ -20,7 +20,7 @@ export const AllImgModal = () => {
     >
       <ModalContent>
         <ModalHeader>画像一覧</ModalHeader>
-        <ModalBody className={`grid max-h-[60vh] grid-cols-4 overflow-x-auto`}>
+        <ModalBody className="grid max-h-[60vh] grid-cols-4 overflow-x-auto">
           {allImgList.map((img) => (
             <div key={`all-img-${img.id}`} className="aspect-square w-[100%]">
               <button

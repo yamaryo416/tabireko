@@ -1,4 +1,4 @@
-import { OfficialInfo } from "@/types/map"
+import type { OfficialInfo } from "@/types/map"
 import { create } from "zustand"
 
 export const INIT_OFFICIAL_INFO: OfficialInfo = {

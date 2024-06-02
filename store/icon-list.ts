@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import { Icon } from "@/types/icon"
+import type { Icon } from "@/types/icon"
 
 // タグに設定するアイコン一覧
 export const useIconListStore = create<{

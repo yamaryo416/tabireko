@@ -8,7 +8,7 @@ export type MapOption = {
   zoom: number
 }
 
-export type DisplayMapMode = "img" | "balloon" | "off"
+export type DisplayMapMode = "marker" | "img" | "balloon" | "off"
 
 export type SearchLocation = {
   keyword: string

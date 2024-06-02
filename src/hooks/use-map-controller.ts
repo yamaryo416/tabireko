@@ -7,10 +7,11 @@ import { useFlashStore } from "../../store/flash"
 import { useSelectedMarkerStore } from "../../store/selected-marker"
 import { useSelectedMarkerImgsStore } from "../../store/selected-marker-imgs"
 import { useSelectedMarkerStoreOfficialImgsStore } from "../../store/selected-marker-official-imgs"
-import { Marker } from "@/types/marker"
+import type { Marker } from "@/types/marker"
 import { useFilterTagIdsStore } from "../../store/filter-tag-ids"
 import { getMarkerOfficialImage } from "@/utils/api/marker_official_image"
-import { MARKER_CRATE, MARKER_DETAIL } from "@/types/page"
+import { MARKER_CREATE, MARKER_DETAIL } from "@/types/page"
+import { useCurrentPositionStore } from "../../store/current-position"
 
 type ReturnType = {
   onClickCurrentLoaction: () => void
@@ -30,17 +31,22 @@ export const useMapController = (): ReturnType => {
   const { setSelectedMarkerOfficialImgs } =
     useSelectedMarkerStoreOfficialImgsStore()
   const { filterTagIds } = useFilterTagIdsStore()
+  const { setCurrentPosition } = useCurrentPositionStore()
 
   // 現在地を取得するイベント
   const onClickCurrentLoaction = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setMapOption({
-          zoom: 13,
+          zoom: 20,
           center: {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           },
+        })
+        setCurrentPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
         })
       },
       (err) => {
@@ -56,7 +62,7 @@ export const useMapController = (): ReturnType => {
       lat: e.latLng?.lat() || 0,
       lng: e.latLng?.lng() || 0,
     })
-    toggleModalOpenList(MARKER_CRATE)
+    toggleModalOpenList(MARKER_CREATE)
     // @ts-ignore
     const { placeId } = e
     if (placeId == null) return
@@ -90,7 +96,7 @@ export const useMapController = (): ReturnType => {
 
   // マーカー詳細に紐づく画像一覧を取得
   const getImageUrl = async (id: number) => {
-    let { data, error } = await getMarkerImage(id)
+    const { data, error } = await getMarkerImage(id)
     if (!!error || data == null) {
       setFlash({ kind: "failed", message: "画像取得に失敗しました" })
       return
@@ -100,7 +106,7 @@ export const useMapController = (): ReturnType => {
 
   // マーカー詳細に紐づく公式画像一覧を取得
   const getOfficialImageUrl = async (id: number) => {
-    let { data, error } = await getMarkerOfficialImage(id)
+    const { data, error } = await getMarkerOfficialImage(id)
     if (!!error || data == null) {
       setFlash({ kind: "failed", message: "画像取得に失敗しました" })
       return

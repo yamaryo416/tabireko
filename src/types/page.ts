@@ -1,4 +1,4 @@
-export const MARKER_CRATE = "marker-create"
+export const MARKER_CREATE = "marker-create"
 export const TAG_CREATE = "tag-create"
 export const MARKER_DETAIL = "marker-detail"
 export const MARKER_EDIT = "marker-edit"

@@ -6,6 +6,7 @@ import { useMapOptionStore } from "../../store/map-option"
 import { useDisplayMapModeStore } from "../../store/map-display-mode"
 import { useEachImgListStore } from "../../store/each-img-list"
 import { useMapController } from "@/hooks/use-map-controller"
+import { useCurrentPositionStore } from "../../store/current-position"
 
 export const defaultMapContainerStyle = {
   width: "100%",
@@ -25,6 +26,7 @@ export const CustomMap = () => {
   const { mapOption } = useMapOptionStore()
   const { displayMapMode } = useDisplayMapModeStore()
   const { eachImgList } = useEachImgListStore()
+  const { currentPosition } = useCurrentPositionStore()
 
   const {
     onClickCurrentLoaction,
@@ -43,16 +45,7 @@ export const CustomMap = () => {
         onClick={openCreateMarkerModal}
       >
         {markerList.filter(markerFilter).map((marker) => (
-          <Marker
-            key={marker.id}
-            position={{ lat: marker.lat, lng: marker.lng }}
-            icon={
-              marker.tag && marker.tag.icon
-                ? marker.tag.icon.url
-                : "https://maps.google.com/mapfiles/kml/paddle/O.png"
-            }
-            onClick={(_) => onOpenDetailMarker(marker)}
-          >
+          <>
             {displayMapMode === "balloon" && (
               <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
                 <button onClick={() => onOpenDetailMarker(marker)}>
@@ -76,7 +69,22 @@ export const CustomMap = () => {
                 </button>
               </InfoWindow>
             )}
-          </Marker>
+            {displayMapMode === "marker" && (
+              <Marker
+                key={marker.id}
+                position={{ lat: marker.lat, lng: marker.lng }}
+                icon={
+                  marker.tag && marker.tag.icon
+                    ? marker.tag.icon.url
+                    : "https://maps.google.com/mapfiles/kml/paddle/O.png"
+                }
+                onClick={(_) => onOpenDetailMarker(marker)}
+              />
+            )}
+            {currentPosition != null && (
+              <Marker position={mapOption.center} icon="images/penguin.png" />
+            )}
+          </>
         ))}
       </GoogleMap>
       <button

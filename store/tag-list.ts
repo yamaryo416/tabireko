@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import { Tag } from "@/types/tag"
+import type { Tag } from "@/types/tag"
 
 // タグ一覧
 export const useTagListStore = create<{

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import { MarkerOfficialImage } from "@/types/marker_official_image"
+import type { MarkerOfficialImage } from "@/types/marker_official_image"
 
 // マーカー詳細の公式画像一覧
 export const useSelectedMarkerStoreOfficialImgsStore = create<{

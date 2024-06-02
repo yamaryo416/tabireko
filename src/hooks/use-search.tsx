@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react"
+import type { ChangeEvent } from "react"
 import { useSearchLocationStore } from "../../store/search-location"
 import { useMarkerListStore } from "../../store/marker-list"
 import { useMapOptionStore } from "../../store/map-option"

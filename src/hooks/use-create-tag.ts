@@ -1,4 +1,5 @@
-import { ChangeEvent, useState } from "react"
+import { useState } from "react"
+import type { ChangeEvent } from "react"
 import { useTagListStore } from "../../store/tag-list"
 import { supabase } from "@/utils/supabase/client"
 import { createTag } from "@/utils/api/tag"

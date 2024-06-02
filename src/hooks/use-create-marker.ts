@@ -7,11 +7,11 @@ import { useFlashStore } from "../../store/flash"
 import { uploadImage } from "@/utils/api/image"
 import { useMarkerListStore } from "../../store/marker-list"
 import { supabase } from "@/utils/supabase/client"
-import { RequestCreateMarker } from "@/types/marker"
+import type { RequestCreateMarker } from "@/types/marker"
 import { createMarker } from "@/utils/api/marker"
 import { createMarkerImage } from "@/utils/api/marker_image"
 import { createMarkerOfficialImage } from "@/utils/api/marker_official_image"
-import { MARKER_CRATE } from "@/types/page"
+import { MARKER_CREATE } from "@/types/page"
 import {
   INIT_OFFICIAL_INFO,
   useOfficialInfoStore,
@@ -99,7 +99,7 @@ export const useCreateMarker = (): ReturnType => {
       setOfficialInfo(INIT_OFFICIAL_INFO)
       setNewMarker(INIT_NEW_MARKER)
       setLoading(false)
-      toggleModalOpenList(MARKER_CRATE)
+      toggleModalOpenList(MARKER_CREATE)
     } catch (e) {
       console.error(e)
       setFlash({ kind: "failed", message: "記録の作成に失敗しました" })

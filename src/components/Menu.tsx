@@ -24,7 +24,7 @@ export const Menu = () => {
         }}
       >
         <DropdownTrigger>
-          <button>
+          <button type="button">
             <Image
               alt="メニューのアイコン"
               src="images/burger_menu_icon.svg"

@@ -9,6 +9,14 @@ import { useDisplayMapModeStore } from "../../store/map-display-mode"
 import { DISPLAY_BTN_LIST } from "../../constants/page"
 
 const DISPLAY_MAPPING = {
+  marker: (
+    <Image
+      alt="マーカーのアイコン"
+      src="https://maps.google.com/mapfiles/kml/paddle/O.png"
+      width={20}
+      height={20}
+    />
+  ),
   img: (
     <Image
       alt="画像のアイコン"
@@ -35,7 +43,7 @@ export const ToggleDisplayBtn = () => {
     <div className="flex pl-3">
       <Dropdown>
         <DropdownTrigger>
-          <button className="text-[12px]">
+          <button type="button" className="text-[12px]">
             {DISPLAY_MAPPING[displayMapMode]}
           </button>
         </DropdownTrigger>

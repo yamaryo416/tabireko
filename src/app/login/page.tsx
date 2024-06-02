@@ -2,34 +2,51 @@
 
 import { Button, Input } from "@nextui-org/react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 
-import { login, signup } from "./action"
+import { supabase } from "@/utils/supabase/client"
+import { useRouter } from "next/navigation"
 
 const LoginPage = () => {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  })
 
-  const handleLogin = async (formData: FormData) => {
-    setLoading(true)
-    login(formData)
-    try {
-      await login(formData)
-    } catch {
-      setLoading(false)
-      setError("ログインに失敗しました")
-    }
+  const changeUser = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setUser({ ...user, [name]: value })
   }
 
-  const handleSignup = async (formData: FormData) => {
+  const handleLogin = async () => {
     setLoading(true)
-    login(formData)
-    try {
-      await signup(formData)
-    } catch {
-      setError("登録に失敗しました")
+
+    const { error } = await supabase.auth.signInWithPassword(user)
+
+    if (error != null) {
       setLoading(false)
+      setError("ログインに失敗しました")
+      return
     }
+
+    router.push("/")
+  }
+
+  const handleSignup = async () => {
+    setLoading(true)
+
+    const { error } = await supabase.auth.signUp(user)
+
+    if (error != null) {
+      setLoading(false)
+      setError("会員登録に失敗しました")
+      return
+    }
+
+    router.push("/")
   }
 
   useEffect(() => {
@@ -60,6 +77,8 @@ const LoginPage = () => {
           name="email"
           type="email"
           variant="underlined"
+          value={user.email}
+          onChange={changeUser}
           required
         />
         <Input
@@ -68,11 +87,13 @@ const LoginPage = () => {
           name="password"
           type="password"
           variant="underlined"
+          value={user.password}
+          onChange={changeUser}
           required
         />
         <Button
-          type="submit"
-          formAction={handleLogin}
+          type="button"
+          onClick={handleLogin}
           color="primary"
           className="mt-10"
           isDisabled={loading}
@@ -81,7 +102,7 @@ const LoginPage = () => {
           ログイン
         </Button>
         <Button
-          type="submit"
+          type="button"
           formAction={handleSignup}
           color="success"
           className="mt-2 text-white"

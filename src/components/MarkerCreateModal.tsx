@@ -18,7 +18,7 @@ import { useTagListStore } from "../../store/tag-list"
 import { useModalOpenListStore } from "../../store/modal-open-list"
 import { useNewMarkerStore } from "../../store/new-marker"
 import { useLoadingStore } from "../../store/loading"
-import { MARKER_CRATE, TAG_CREATE } from "@/types/page"
+import { MARKER_CREATE, TAG_CREATE } from "@/types/page"
 import { useCreateMarker } from "@/hooks/use-create-marker"
 
 export const MarkerCreateModal = () => {
@@ -33,8 +33,8 @@ export const MarkerCreateModal = () => {
   return (
     <Modal
       placement="center"
-      isOpen={modalOpenList.includes(MARKER_CRATE)}
-      onClose={() => toggleModalOpenList(MARKER_CRATE)}
+      isOpen={modalOpenList.includes(MARKER_CREATE)}
+      onClose={() => toggleModalOpenList(MARKER_CREATE)}
       isDismissable={false}
       className="mx-10"
     >
@@ -126,7 +126,7 @@ export const MarkerCreateModal = () => {
               type="button"
               color="default"
               variant="light"
-              onPress={() => toggleModalOpenList(MARKER_CRATE)}
+              onPress={() => toggleModalOpenList(MARKER_CREATE)}
             >
               閉じる
             </Button>

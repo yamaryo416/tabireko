@@ -34,7 +34,7 @@ export const FilterTagModal = () => {
             <Checkbox
               isSelected={filterTagIds.includes(tag.id)}
               key={tag.id}
-              onClick={() => toggleFilterTagIds(tag.id)}
+              onChange={() => toggleFilterTagIds(tag.id)}
             >
               <span className="flex items-center">
                 {tag.icon && (
@@ -51,7 +51,7 @@ export const FilterTagModal = () => {
           ))}
           <Checkbox
             isSelected={filterTagIds.includes(0)}
-            onClick={() => toggleFilterTagIds(0)}
+            onChange={() => toggleFilterTagIds(0)}
           >
             タグなし
           </Checkbox>

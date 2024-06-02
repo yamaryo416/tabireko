@@ -1,4 +1,4 @@
-import { MapOption } from "@/types/map"
+import type { MapOption } from "@/types/map"
 import { create } from "zustand"
 
 // 表示するgoogle mapのズームの倍率と中心位置
