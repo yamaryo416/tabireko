@@ -11,7 +11,7 @@ export const SEARCH_MARKER = "search-marker"
 export const INSTANCE_MARKER_CREATE = "instance-marker-create"
 export const PUBLIC_MARKER = "public-marker"
 
-export const MENU_LIST = [
+export const PUBLIC_MENU_LIST = [
   {
     img: "calendar_icon.svg",
     key: CALENDAR,
@@ -25,6 +25,16 @@ export const MENU_LIST = [
     label: "画像一覧",
   },
   {
+    img: "search_icon.svg",
+    key: SEARCH_MARKER,
+    description: "search record",
+    label: "記録検索",
+  },
+]
+
+export const MENU_LIST = [
+  ...PUBLIC_MENU_LIST,
+  {
     img: "filter_icon.svg",
     key: TAG_FILTER,
     description: "filter tag",
@@ -35,12 +45,6 @@ export const MENU_LIST = [
     key: SEARCH_LOCATION,
     description: "search location",
     label: "場所検索",
-  },
-  {
-    img: "search_icon.svg",
-    key: SEARCH_MARKER,
-    description: "search record",
-    label: "記録検索",
   },
   {
     img: "marker_icon.svg",

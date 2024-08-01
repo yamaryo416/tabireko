@@ -11,12 +11,14 @@ import { useTagStore } from "../../store/tag"
 import { getEachMarkerImage } from "@/utils/api/marker_image"
 import { EachMarkerImage } from "@/types/marker_image"
 import { useEachImgListStore } from "../../store/each-img-list"
+import { useAllImgListStore } from "../../store/all-img-list"
 
 export const usePublicFetch = () => {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
   const { setMapOption } = useMapOptionStore()
   const { setFlash } = useFlashStore()
+  const { setAllImgList } = useAllImgListStore()
   const { setMarkerList } = useMarkerListStore()
   const { setTag } = useTagStore()
   const { setEachImgList } = useEachImgListStore()
@@ -52,6 +54,7 @@ export const usePublicFetch = () => {
       setFlash({ kind: "failed", message: "画像取得に失敗しました" })
       return
     }
+    setAllImgList(data)
     let newImageList: EachMarkerImage = {}
     data.forEach((item) => {
       if (item.marker_id != null && newImageList[item.marker_id] == null) {
@@ -64,8 +67,6 @@ export const usePublicFetch = () => {
   useEffect(() => {
     fetchTagAndMarkerList()
   }, [])
-
-  useEffect(() => {}, [])
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(

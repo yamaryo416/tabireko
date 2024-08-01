@@ -14,10 +14,10 @@ export const Header = () => {
         {tag == null ? (
           <Image alt="ロゴ" src="/images/logo.png" width={100} height={25} />
         ) : (
-          <h1 className="text-3xl font-bold">{tag.name}.map</h1>
+          <h1 className="text-center text-xl font-bold">{tag.name}.map</h1>
         )}
       </div>
-      {tag == null && <Menu />}
+      <Menu />
     </div>
   )
 }
