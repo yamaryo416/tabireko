@@ -6,4 +6,5 @@ export type Tag = {
   user_id: string
   name: string
   icon: Icon | null
+  access_token: string | null
 }

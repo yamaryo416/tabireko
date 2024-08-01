@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 
 import { supabase } from "@/utils/supabase/client"
 import { useRouter } from "next/navigation"
+import Head from "next/head"
 
 const LoginPage = () => {
   const router = useRouter()
@@ -58,6 +59,9 @@ const LoginPage = () => {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
+      <Head>
+        <title>旅ろぐ</title>
+      </Head>
       <form className="flex flex-col items-center justify-center">
         <Image
           alt="ロゴ"

@@ -10,7 +10,11 @@ import { useSelectedMarkerStoreOfficialImgsStore } from "../../store/selected-ma
 import { MARKER_DELETE, MARKER_DETAIL, MARKER_EDIT } from "@/types/page"
 import { useEditMarkerStore } from "../../store/edit-marker"
 
-export const MarkerDetailModal = () => {
+type PropsType = {
+  isPublic: boolean
+}
+
+export const MarkerDetailModal = ({ isPublic }: PropsType) => {
   const { selectedMarkerImgs } = useSelectedMarkerImgsStore()
   const { selectedMarkerOfficialImgs } =
     useSelectedMarkerStoreOfficialImgsStore()
@@ -139,17 +143,19 @@ export const MarkerDetailModal = () => {
               priority={false}
             />
           ))}
-          <div className="flex justify-center">
-            <Button color="success" onClick={onOpenEditMarker}>
-              編集
-            </Button>
-            <Button
-              color="danger"
-              onClick={() => toggleModalOpenList(MARKER_DELETE)}
-            >
-              削除
-            </Button>
-          </div>
+          {!isPublic && (
+            <div className="flex justify-center">
+              <Button color="success" onClick={onOpenEditMarker}>
+                編集
+              </Button>
+              <Button
+                color="danger"
+                onClick={() => toggleModalOpenList(MARKER_DELETE)}
+              >
+                削除
+              </Button>
+            </div>
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>

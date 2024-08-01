@@ -26,6 +26,7 @@ export const getMarkerList = async () => {
         created_at,
         user_id,
         name,
+        access_token,
         icon (
           id,
           created_at,
@@ -36,6 +37,41 @@ export const getMarkerList = async () => {
     `,
     )
     .eq("user_id", userData.data.user.id)
+}
+
+export const getMarkerListByTagId = async (tagId: number) => {
+  return await supabase
+    .from("marker")
+    .select(
+      `
+      id,
+      created_at,
+      user_id,
+      visited_datetime,
+      lat,
+      lng,
+      content,
+      title,
+      official_title,
+      official_description,
+      official_web_url,
+      official_google_map_url,
+      tag (
+        id,
+        created_at,
+        user_id,
+        name,
+        access_token,
+        icon (
+          id,
+          created_at,
+          name,
+          url
+        )
+      )
+    `,
+    )
+    .eq("tag_id", tagId)
 }
 
 export const createMarker = async (data: any) => {
@@ -57,6 +93,7 @@ export const createMarker = async (data: any) => {
         created_at,
         user_id,
         name,
+        access_token,
         icon (
           id,
           created_at,
@@ -86,6 +123,7 @@ export const updateMarker = async (id: number, data: any) => {
         created_at,
         user_id,
         name,
+        access_token,
         icon (
           id,
           created_at,
