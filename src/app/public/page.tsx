@@ -10,6 +10,9 @@ import { MarkerDetailModal } from "@/components/MarkerDetailModal"
 import Head from "next/head"
 import { PublicLayout } from "@/components/PublicLayout"
 import { Suspense } from "react"
+import { CalendarModal } from "@/components/CalendarModal"
+import { AllImgModal } from "@/components/AllImgModal"
+import { SearchMarkerModal } from "@/components/SearchMarkerModal"
 
 export default function PublicPage() {
   return (
@@ -29,6 +32,12 @@ export default function PublicPage() {
                 <CustomMap isPublic />
                 {/* マーカー詳細モーダル */}
                 <MarkerDetailModal isPublic />
+                {/* カレンダーモーダル */}
+                <CalendarModal />
+                {/* 画像一覧モーダル */}
+                <AllImgModal />
+                {/* マーカー検索モーダル */}
+                <SearchMarkerModal />
                 <div id="map_canvas" />
                 <div className="mt-[20000px]">&copy;2024 ryo yamaguchi</div>
               </div>

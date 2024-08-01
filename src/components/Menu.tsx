@@ -7,11 +7,15 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react"
 
-import { MENU_LIST } from "@/types/page"
+import { MENU_LIST, PUBLIC_MENU_LIST } from "@/types/page"
 import { useModalOpenListStore } from "../../store/modal-open-list"
+import { useTagStore } from "../../store/tag"
 
 export const Menu = () => {
   const { toggleModalOpenList } = useModalOpenListStore()
+  const { tag } = useTagStore()
+
+  const menuList = tag === null ? MENU_LIST : PUBLIC_MENU_LIST
 
   return (
     <div className="flex justify-end pr-3">
@@ -35,7 +39,7 @@ export const Menu = () => {
         </DropdownTrigger>
         <DropdownMenu variant="faded" aria-label="メニュー">
           <DropdownSection title="メニュー">
-            {MENU_LIST.map((item) => (
+            {menuList.map((item) => (
               <DropdownItem
                 key={item.key}
                 description={item.description}
