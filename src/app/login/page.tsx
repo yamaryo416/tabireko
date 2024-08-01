@@ -103,7 +103,7 @@ const LoginPage = () => {
         </Button>
         <Button
           type="button"
-          formAction={handleSignup}
+          onClick={handleSignup}
           color="success"
           className="mt-2 text-white"
           isDisabled={loading}
