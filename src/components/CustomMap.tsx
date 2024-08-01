@@ -21,7 +21,11 @@ const defaultMapOptions: google.maps.MapOptions = {
   mapTypeId: "roadmap",
 }
 
-export const CustomMap = () => {
+type PropsType = {
+  isPublic: boolean
+}
+
+export const CustomMap = ({ isPublic }: PropsType) => {
   const { markerList } = useMarkerListStore()
   const { mapOption } = useMapOptionStore()
   const { displayMapMode } = useDisplayMapModeStore()
@@ -43,66 +47,77 @@ export const CustomMap = () => {
         center={mapOption.center}
         zoom={mapOption.zoom}
         options={defaultMapOptions}
-        onClick={openCreateMarkerModal}
+        onClick={(e) => {
+          if (!isPublic) {
+            openCreateMarkerModal(e)
+          }
+        }}
       >
-        {markerList.filter(markerFilter).map((marker) => (
-          <>
-            {displayMapMode === "balloon" && (
-              <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
-                <button onClick={() => onOpenDetailMarker(marker)}>
-                  {marker.title}
-                </button>
-              </InfoWindow>
-            )}
-            {displayMapMode === "img" && (
-              <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
-                <button onClick={() => onOpenDetailMarker(marker)}>
-                  {eachImgList[marker.id] == null ? (
-                    "画像なし"
-                  ) : (
-                    <Image
-                      alt="その地点の画像"
-                      src={eachImgList[marker.id]}
-                      width={50}
-                      height={50}
-                    />
-                  )}
-                </button>
-              </InfoWindow>
-            )}
-            {displayMapMode === "marker" && (
-              <Marker
-                key={marker.id}
-                position={{ lat: marker.lat, lng: marker.lng }}
-                icon={
-                  marker.tag && marker.tag.icon
-                    ? marker.tag.icon.url
-                    : "https://maps.google.com/mapfiles/kml/paddle/O.png"
-                }
-                onClick={(_) => onOpenDetailMarker(marker)}
-              />
-            )}
-            {currentPosition != null && (
-              <Marker position={mapOption.center} icon="images/penguin.png" />
-            )}
-          </>
-        ))}
+        {markerList
+          .filter((marker) => isPublic || markerFilter(marker))
+          .map((marker) => (
+            <>
+              {displayMapMode === "balloon" && (
+                <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
+                  <button onClick={() => onOpenDetailMarker(marker)}>
+                    {marker.title}
+                  </button>
+                </InfoWindow>
+              )}
+              {displayMapMode === "img" && (
+                <InfoWindow position={{ lat: marker.lat, lng: marker.lng }}>
+                  <button onClick={() => onOpenDetailMarker(marker)}>
+                    {eachImgList[marker.id] == null ? (
+                      "画像なし"
+                    ) : (
+                      <Image
+                        alt="その地点の画像"
+                        src={eachImgList[marker.id]}
+                        width={50}
+                        height={50}
+                      />
+                    )}
+                  </button>
+                </InfoWindow>
+              )}
+              {displayMapMode === "marker" && (
+                <Marker
+                  key={marker.id}
+                  position={{ lat: marker.lat, lng: marker.lng }}
+                  icon={
+                    marker.tag && marker.tag.icon
+                      ? marker.tag.icon.url
+                      : "https://maps.google.com/mapfiles/kml/paddle/O.png"
+                  }
+                  onClick={(_) => onOpenDetailMarker(marker)}
+                />
+              )}
+              {currentPosition != null && (
+                <Marker position={mapOption.center} icon="images/penguin.png" />
+              )}
+            </>
+          ))}
       </GoogleMap>
-      <div className="absolute bottom-[20px] left-[10px] flex flex-col gap-2">
-        <button
-          type="button"
-          className="bg-amber-700 p-2.5 text-white"
-          onClick={onOpenInstantCreateModal}
-        >
-          現在地から即作成
-        </button>
-        <button
-          type="button"
-          className="bg-white p-2.5"
-          onClick={onClickCurrentLoaction}
-        >
-          現在地
-        </button>
+      {!isPublic && (
+        <div className="absolute bottom-[20px] left-[10px] flex flex-col gap-2">
+          <button
+            type="button"
+            className="bg-amber-700 p-2.5 text-white"
+            onClick={onOpenInstantCreateModal}
+          >
+            現在地から即作成
+          </button>
+          <button
+            type="button"
+            className="bg-white p-2.5"
+            onClick={onClickCurrentLoaction}
+          >
+            現在地
+          </button>
+        </div>
+      )}
+      <div className="absolute bottom-[-40px] left-0 right-0 text-center opacity-60">
+        &copy;2023-2024 ryo yamaguchi
       </div>
     </div>
   )

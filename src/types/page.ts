@@ -9,6 +9,7 @@ export const IMG_LIST = "img-list"
 export const SEARCH_LOCATION = "search-location"
 export const SEARCH_MARKER = "search-marker"
 export const INSTANCE_MARKER_CREATE = "instance-marker-create"
+export const PUBLIC_MARKER = "public-marker"
 
 export const MENU_LIST = [
   {
@@ -40,5 +41,11 @@ export const MENU_LIST = [
     key: SEARCH_MARKER,
     description: "search record",
     label: "記録検索",
+  },
+  {
+    img: "marker_icon.svg",
+    key: PUBLIC_MARKER,
+    description: "public marker",
+    label: "マーカー公開設定",
   },
 ]

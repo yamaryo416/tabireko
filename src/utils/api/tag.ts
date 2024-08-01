@@ -13,6 +13,7 @@ export const getTagList = async () => {
         created_at,
         user_id,
         name,
+        access_token,
         icon (
           id,
           created_at,
@@ -22,6 +23,27 @@ export const getTagList = async () => {
       `,
     )
     .eq("user_id", userData.data.user.id)
+}
+
+export const getTagByToken = async (token: string) => {
+  return await supabase
+    .from("tag")
+    .select(
+      `
+        id,
+        created_at,
+        user_id,
+        name,
+        access_token,
+        icon (
+          id,
+          created_at,
+          name,
+          url
+        )
+      `,
+    )
+    .eq("access_token", token)
 }
 
 export const createTag = async (data: any) => {
@@ -34,6 +56,7 @@ export const createTag = async (data: any) => {
         created_at,
         user_id,
         name,
+        access_token,
         icon (
           id,
           created_at,
@@ -52,5 +75,5 @@ export const updateTag = async (id: number, data: any) => {
     .from("tag")
     .update(data)
     .eq("id", id)
-    .select("accss_token")
+    .select("access_token")
 }
